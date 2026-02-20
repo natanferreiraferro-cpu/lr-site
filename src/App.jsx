@@ -1,5 +1,46 @@
+import { useState } from "react";
+
 export default function App() {
-  const whatsapp = "https://wa.me/5582999590131";
+  const whatsapp = "https://wa.me/558299390131";
+  const [formData, setFormData] = useState({
+    nome: "",
+    telefone: "",
+    cidade: "",
+    consumo: "",
+  });
+
+  const formatPhone = (value) => {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    if (name === "telefone") {
+      setFormData((prev) => ({ ...prev, telefone: formatPhone(value) }));
+      return;
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const msg = [
+      "Olá! Quero um orçamento de energia solar.",
+      `Nome: ${formData.nome}`,
+      `Telefone: ${formData.telefone}`,
+      `Cidade: ${formData.cidade}`,
+      `Consumo médio em R$: ${formData.consumo}`,
+    ].join("\n");
+
+    window.open(`${whatsapp}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+  };
 
   const stats = [
     { value: "+3.200", label: "Clientes atendidos" },
@@ -53,6 +94,8 @@ export default function App() {
     <div className="page">
       <style>{css}</style>
 
+      <a className="skipLink" href="#conteudo-principal">Pular para conteúdo principal</a>
+
       {/* Topbar */}
       <header className="topbar">
         <div className="container topbarInner">
@@ -60,9 +103,10 @@ export default function App() {
             <img className="brandLogo" src="/logo.png" alt="LR Soluções Elétricas" />
           </a>
 
-          <nav className="nav">
+          <nav className="nav" aria-label="Navegação principal">
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
+            <a href="#formulario-orcamento">Formulário</a>
             <a href="#atendimento">Atendimento por voz</a>
             <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
               Orçamento no WhatsApp
@@ -136,7 +180,7 @@ export default function App() {
       </section>
 
       {/* Especialidades */}
-      <main className="container">
+      <main id="conteudo-principal" className="container">
         <section id="especialidades" className="section">
           <div className="sectionHead">
             <h2>Nossas Especialidades</h2>
@@ -182,6 +226,62 @@ export default function App() {
           </div>
         </section>
 
+        <section className="section" id="formulario-orcamento">
+          <div className="formCard">
+            <div className="sectionHead">
+              <h2>PREENCHA O FORMULÁRIO E MANDAREMOS UM ORÇAMENTO DE ENERGIA SOLAR DIRETO NO SEU WHATSAPP</h2>
+            </div>
+
+            <form className="budgetForm" onSubmit={handleSubmit}>
+              <label htmlFor="nome">Nome</label>
+              <input
+                id="nome"
+                name="nome"
+                type="text"
+                value={formData.nome}
+                onChange={handleChange}
+                required
+              />
+
+              <label htmlFor="telefone">Telefone</label>
+              <input
+                id="telefone"
+                name="telefone"
+                type="tel"
+                placeholder="(DDD) XXXXX-XXXX*"
+                value={formData.telefone}
+                onChange={handleChange}
+                required
+              />
+
+              <label htmlFor="cidade">Cidade</label>
+              <input
+                id="cidade"
+                name="cidade"
+                type="text"
+                value={formData.cidade}
+                onChange={handleChange}
+                required
+              />
+
+              <label htmlFor="consumo">Consumo médio em R$</label>
+              <input
+                id="consumo"
+                name="consumo"
+                type="text"
+                inputMode="decimal"
+                value={formData.consumo}
+                onChange={handleChange}
+                required
+              />
+
+              <button className="btn primary" type="submit">
+                Enviar e falar no WhatsApp
+              </button>
+            </form>
+          </div>
+        </section>
+
         {/* Widget */}
         <section id="atendimento" className="section">
           <div className="sectionHead">
@@ -193,6 +293,7 @@ export default function App() {
             <voiceai-widget
               id="V2ViV2lkZ2V0VHlwZTpZd2RYNnc3"
               host="callx.aceleradoramx3.com"
+              aria-label="Widget de atendimento por voz da LR Soluções Elétricas"
             ></voiceai-widget>
           </div>
         </section>
@@ -482,6 +583,39 @@ h1{
 .ctaBandBoxTitle{font-weight:1100; font-size:16px}
 .ctaBandBoxText{color:var(--muted); line-height:1.5}
 
+/* Form */
+.formCard{
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px;
+}
+.budgetForm{
+  margin-top:16px;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px 14px;
+}
+.budgetForm label{
+  grid-column: span 2;
+  font-weight:800;
+  color:var(--text);
+}
+.budgetForm input{
+  grid-column: span 2;
+  width:100%;
+  padding:11px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  color:var(--text);
+}
+.budgetForm input::placeholder{color:rgba(255,255,255,.55)}
+.budgetForm button{
+  margin-top:8px;
+  grid-column: span 2;
+}
+
 /* Widget */
 .widgetWrap{
   margin-top:14px;
@@ -531,6 +665,29 @@ h1{
   font-size:13px;
 }
 .footerInner{display:flex; justify-content:center; text-align:center}
+
+
+
+.skipLink{
+  position:absolute;
+  left:-9999px;
+  top:auto;
+}
+.skipLink:focus{
+  left:20px;
+  top:12px;
+  z-index:90;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#111114;
+}
+
+a:focus-visible,
+.btn:focus-visible{
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
 
 /* Responsive */
 @media (max-width: 980px){
