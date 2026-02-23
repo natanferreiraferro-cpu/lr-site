@@ -5,6 +5,9 @@ export default function App() {
   const [refName, setRefName] = useState("");
   const [refPhone, setRefPhone] = useState("");
   const [refCpf, setRefCpf] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+  const [energyCost, setEnergyCost] = useState("");
   const stats = [
     { value: "+3.200", label: "Clientes atendidos" },
     { value: "+2.000", label: "Usinas solares instaladas" },
@@ -70,10 +73,16 @@ export default function App() {
 
   const referralMessage = encodeURIComponent(
     `Olá! Quero solicitar um orçamento.
+
 Indicação:
 Nome: ${refName || "Não informado"}
 Número: ${refPhone || "Não informado"}
-CPF: ${refCpf || "Não informado"}`,
+CPF: ${refCpf || "Não informado"}
+
+Novo cliente:
+Nome: ${clientName || "Não informado"}
+Telefone: ${clientPhone || "Não informado"}
+Gasto mensal de energia: ${energyCost || "Não informado"}`,
   );
   const whatsappReferralLink = `${whatsapp}?text=${referralMessage}`;
 
@@ -297,6 +306,36 @@ CPF: ${refCpf || "Não informado"}`,
                 value={refCpf}
                 onChange={(event) => setRefCpf(event.target.value)}
                 placeholder="000.000.000-00"
+              />
+
+              <div className="referralDivider" aria-hidden="true" />
+
+              <div className="referralFormTitle">Dados do novo cliente</div>
+              <label htmlFor="clientName">Nome</label>
+              <input
+                id="clientName"
+                type="text"
+                value={clientName}
+                onChange={(event) => setClientName(event.target.value)}
+                placeholder="Nome completo do cliente"
+              />
+
+              <label htmlFor="clientPhone">Telefone</label>
+              <input
+                id="clientPhone"
+                type="tel"
+                value={clientPhone}
+                onChange={(event) => setClientPhone(event.target.value)}
+                placeholder="(82) 99999-9999"
+              />
+
+              <label htmlFor="energyCost">Quanto gasta de energia</label>
+              <input
+                id="energyCost"
+                type="text"
+                value={energyCost}
+                onChange={(event) => setEnergyCost(event.target.value)}
+                placeholder="Ex: R$ 650/mês"
               />
 
               <a className="btn primary" href={whatsappReferralLink} target="_blank" rel="noreferrer">
@@ -633,6 +672,11 @@ h1{
   font-size:15px;
   font-weight:1000;
   margin-bottom:4px;
+}
+.referralDivider{
+  height:1px;
+  background: rgba(255,255,255,.14);
+  margin:6px 0 2px;
 }
 .referralForm label{
   color:var(--muted);
