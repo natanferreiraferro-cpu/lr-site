@@ -1,6 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const FIRST_GALLERY_IMAGE = "/logo.png";
+const GALLERY_STORAGE_KEY = "lr-gallery-images-v1";
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "123456";
+const defaultGalleryImages = [
+  { src: FIRST_GALLERY_IMAGE, alt: "Usina solar em solo com fileiras de painéis" },
+  { src: "/projetos/projeto-02.jpg", alt: "Sistema fotovoltaico em cobertura comercial" },
+  { src: "/projetos/projeto-03.jpg", alt: "Painéis solares em cobertura rural" },
+  { src: "/projetos/projeto-04.jpg", alt: "Usina solar com estrutura em solo" },
+  { src: "/projetos/projeto-05.jpg", alt: "Instalação de painéis em cobertura industrial" },
+  { src: "/projetos/projeto-06.jpg", alt: "Equipe técnica em atividade elétrica" },
+  { src: "/projetos/projeto-07.jpg", alt: "Logística de equipamentos para instalação solar" },
+  { src: "/projetos/projeto-08.jpg", alt: "Transformador em subestação" },
+  { src: "/projetos/projeto-09.jpg", alt: "Manutenção em painel elétrico" },
+  { src: "/projetos/projeto-10.jpg", alt: "Sistema residencial com equipe em campo" },
+  { src: "/projetos/projeto-11.jpg", alt: "Cobertura solar noturna" },
+  { src: "/projetos/projeto-12.jpg", alt: "Medição térmica em painel elétrico" },
+];
 
 export default function App() {
   const whatsapp = "https://wa.me/5582999390131";
@@ -10,6 +27,30 @@ export default function App() {
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [energyCost, setEnergyCost] = useState("");
+  const [galleryImages, setGalleryImages] = useState(() => {
+    try {
+      const savedGallery = localStorage.getItem(GALLERY_STORAGE_KEY);
+
+      if (!savedGallery) {
+        return defaultGalleryImages;
+      }
+
+      const parsed = JSON.parse(savedGallery);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    } catch {
+      return defaultGalleryImages;
+    }
+
+    return defaultGalleryImages;
+  });
+  const [loginUser, setLoginUser] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [isAdminLogged, setIsAdminLogged] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
+  const [newImageTitle, setNewImageTitle] = useState("");
   const stats = [
     { value: "+3.200", label: "Clientes atendidos" },
     { value: "+2.000", label: "Usinas solares instaladas" },
@@ -58,20 +99,88 @@ export default function App() {
     },
   ];
 
-  const galleryImages = [
-    { src: FIRST_GALLERY_IMAGE, alt: "Usina solar em solo com fileiras de painéis" },
-    { src: "/projetos/projeto-02.jpg", alt: "Sistema fotovoltaico em cobertura comercial" },
-    { src: "/projetos/projeto-03.jpg", alt: "Painéis solares em cobertura rural" },
-    { src: "/projetos/projeto-04.jpg", alt: "Usina solar com estrutura em solo" },
-    { src: "/projetos/projeto-05.jpg", alt: "Instalação de painéis em cobertura industrial" },
-    { src: "/projetos/projeto-06.jpg", alt: "Equipe técnica em atividade elétrica" },
-    { src: "/projetos/projeto-07.jpg", alt: "Logística de equipamentos para instalação solar" },
-    { src: "/projetos/projeto-08.jpg", alt: "Transformador em subestação" },
-    { src: "/projetos/projeto-09.jpg", alt: "Manutenção em painel elétrico" },
-    { src: "/projetos/projeto-10.jpg", alt: "Sistema residencial com equipe em campo" },
-    { src: "/projetos/projeto-11.jpg", alt: "Cobertura solar noturna" },
-    { src: "/projetos/projeto-12.jpg", alt: "Medição térmica em painel elétrico" },
-  ];
+  useEffect(() => {
+    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(galleryImages));
+  }, [galleryImages]);
+
+  function handleLogin(event) {
+    event.preventDefault();
+    if (loginUser === ADMIN_USERNAME && loginPassword === ADMIN_PASSWORD) {
+      setIsAdminLogged(true);
+      setAuthError("");
+      setLoginPassword("");
+      return;
+    }
+
+    setAuthError("Login ou senha inválidos.");
+  }
+
+  function handleLogout() {
+    setIsAdminLogged(false);
+    setLoginUser("");
+    setLoginPassword("");
+  }
+
+  function handleGalleryFieldChange(index, field, value) {
+    setGalleryImages((current) =>
+      current.map((item, currentIndex) =>
+        currentIndex === index
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item,
+      ),
+    );
+  }
+
+  function handleRemoveImage(index) {
+    setGalleryImages((current) => current.filter((_, currentIndex) => currentIndex !== index));
+  }
+
+  function handleAddImage(event) {
+    event.preventDefault();
+
+    if (!newImageUrl.trim()) {
+      return;
+    }
+
+    setGalleryImages((current) => [
+      ...current,
+      {
+        src: newImageUrl.trim(),
+        alt: newImageTitle.trim() || `Projeto ${String(current.length + 1).padStart(2, "0")}`,
+      },
+    ]);
+
+    setNewImageUrl("");
+    setNewImageTitle("");
+  }
+
+  function handleImageUpload(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        return;
+      }
+
+      setGalleryImages((current) => [
+        ...current,
+        {
+          src: reader.result,
+          alt: file.name || `Projeto ${String(current.length + 1).padStart(2, "0")}`,
+        },
+      ]);
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  }
 
   const referralMessage = encodeURIComponent(
     `Olá! Quero solicitar um orçamento.
@@ -245,6 +354,119 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
               </figure>
             ))}
           </div>
+        </section>
+
+        <section id="admin-galeria" className="section">
+          <div className="sectionHead">
+            <h2>Área de gestão da galeria</h2>
+            <p>Faça login para editar, remover e adicionar novas fotos de projetos.</p>
+          </div>
+
+          {!isAdminLogged ? (
+            <form className="adminLogin" onSubmit={handleLogin}>
+              <div className="adminGrid">
+                <div>
+                  <label htmlFor="adminUser">Login</label>
+                  <input
+                    id="adminUser"
+                    type="text"
+                    value={loginUser}
+                    onChange={(event) => setLoginUser(event.target.value)}
+                    placeholder="Usuário"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="adminPassword">Senha</label>
+                  <input
+                    id="adminPassword"
+                    type="password"
+                    value={loginPassword}
+                    onChange={(event) => setLoginPassword(event.target.value)}
+                    placeholder="Senha"
+                  />
+                </div>
+              </div>
+
+              <button className="btn primary" type="submit">
+                Entrar
+              </button>
+
+              {authError ? <p className="adminError">{authError}</p> : null}
+              <p className="adminHint">
+                Acesso inicial: login <strong>admin</strong> e senha <strong>123456</strong>.
+              </p>
+            </form>
+          ) : (
+            <div className="adminPanel">
+              <div className="adminToolbar">
+                <strong>Editor da galeria ativo</strong>
+                <button className="btn" type="button" onClick={handleLogout}>
+                  Sair
+                </button>
+              </div>
+
+              <form className="adminAddForm" onSubmit={handleAddImage}>
+                <label htmlFor="newImageUrl">Nova foto (cole a URL da imagem)</label>
+                <input
+                  id="newImageUrl"
+                  type="url"
+                  value={newImageUrl}
+                  onChange={(event) => setNewImageUrl(event.target.value)}
+                  placeholder="https://..."
+                />
+
+                <label htmlFor="newImageTitle">Título/descrição (opcional)</label>
+                <input
+                  id="newImageTitle"
+                  type="text"
+                  value={newImageTitle}
+                  onChange={(event) => setNewImageTitle(event.target.value)}
+                  placeholder="Ex: Usina Solar - Maceió"
+                />
+
+                <div className="adminActions">
+                  <button className="btn primary" type="submit">
+                    Adicionar por URL
+                  </button>
+
+                  <label className="btn" htmlFor="uploadImageInput">
+                    Enviar arquivo
+                  </label>
+                  <input id="uploadImageInput" type="file" accept="image/*" onChange={handleImageUpload} />
+                </div>
+              </form>
+
+              <div className="adminList">
+                {galleryImages.map((image, index) => (
+                  <article className="adminItem" key={`${image.src}-${index}`}>
+                    <img src={image.src} alt={image.alt} />
+                    <div className="adminItemFields">
+                      <label htmlFor={`img-src-${index}`}>URL da imagem</label>
+                      <input
+                        id={`img-src-${index}`}
+                        type="text"
+                        value={image.src}
+                        onChange={(event) => handleGalleryFieldChange(index, "src", event.target.value)}
+                      />
+
+                      <label htmlFor={`img-alt-${index}`}>Descrição</label>
+                      <input
+                        id={`img-alt-${index}`}
+                        type="text"
+                        value={image.alt}
+                        onChange={(event) => handleGalleryFieldChange(index, "alt", event.target.value)}
+                      />
+
+                      <button className="btn" type="button" onClick={() => handleRemoveImage(index)}>
+                        Remover foto
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Widget */}
@@ -637,6 +859,71 @@ h1{
   font-size:12px;
   color:var(--muted);
   border-top:1px solid rgba(255,255,255,.08);
+}
+
+/* Admin gallery */
+.adminLogin,
+.adminPanel{
+  margin-top:16px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  background: rgba(255,255,255,.03);
+}
+.adminGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+}
+.adminLogin label,
+.adminAddForm label,
+.adminItemFields label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px;
+  font-weight:700;
+}
+.adminLogin input,
+.adminAddForm input,
+.adminItemFields input{
+  width:100%;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.03);
+  color:var(--text);
+  padding:10px 12px;
+  font-size:14px;
+  margin-bottom:10px;
+}
+.adminError{color:#ff8f8f; font-weight:700; margin:8px 0 0}
+.adminHint{color:var(--muted); font-size:12px; margin:8px 0 0}
+.adminToolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.adminAddForm{margin-bottom:12px}
+.adminActions{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+#uploadImageInput{display:none}
+.adminList{display:grid; gap:10px}
+.adminItem{
+  display:grid;
+  grid-template-columns: 160px 1fr;
+  gap:10px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;
+  padding:10px;
+  background: rgba(0,0,0,.2);
+}
+.adminItem img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.08);
 }
 
 /* Final CTA */
