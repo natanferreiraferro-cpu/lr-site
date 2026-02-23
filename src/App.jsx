@@ -219,33 +219,6 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
         </div>
       </header>
 
-      {!isAdminLogged ? (
-        <form className="adminFloatingAuth" onSubmit={handleLogin}>
-          <label htmlFor="adminUser">Login</label>
-          <input
-            id="adminUser"
-            type="text"
-            value={loginUser}
-            onChange={(event) => setLoginUser(event.target.value)}
-            placeholder="Usuário"
-          />
-
-          <label htmlFor="adminPassword">Senha</label>
-          <input
-            id="adminPassword"
-            type="password"
-            value={loginPassword}
-            onChange={(event) => setLoginPassword(event.target.value)}
-            placeholder="Senha"
-          />
-
-          <button className="btn primary" type="submit">
-            Entrar
-          </button>
-
-          {authError ? <p className="adminError">{authError}</p> : null}
-        </form>
-      ) : null}
 
       {/* Hero */}
       <section id="inicio" className="hero">
@@ -549,6 +522,34 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
               </a>
             </form>
           </div>
+
+          {!isAdminLogged ? (
+            <form className="adminInlineAuth" onSubmit={handleLogin}>
+              <label htmlFor="adminUser">Login</label>
+              <input
+                id="adminUser"
+                type="text"
+                value={loginUser}
+                onChange={(event) => setLoginUser(event.target.value)}
+                placeholder="Usuário"
+              />
+
+              <label htmlFor="adminPassword">Senha</label>
+              <input
+                id="adminPassword"
+                type="password"
+                value={loginPassword}
+                onChange={(event) => setLoginPassword(event.target.value)}
+                placeholder="Senha"
+              />
+
+              <button className="btn primary" type="submit">
+                Entrar
+              </button>
+
+              {authError ? <p className="adminError">{authError}</p> : null}
+            </form>
+          ) : null}
         </section>
       </main>
 
@@ -846,17 +847,13 @@ h1{
 
 /* Admin gallery */
 
-.adminFloatingAuth{
-  position:fixed;
-  top:82px;
-  right:18px;
-  z-index:70;
-  width:min(92vw, 240px);
+.adminInlineAuth{
+  margin-top:14px;
+  width:min(100%, 360px);
   border:1px solid var(--line);
   border-radius:14px;
-  padding:10px;
-  background: rgba(10,10,12,.92);
-  backdrop-filter: blur(8px);
+  padding:12px;
+  background: rgba(255,255,255,.03);
 }
 
 .adminPanel{
@@ -866,7 +863,7 @@ h1{
   padding:16px;
   background: rgba(255,255,255,.03);
 }
-.adminFloatingAuth label,
+.adminInlineAuth label,
 .adminAddForm label,
 .adminItemFields label{
   display:block;
@@ -875,7 +872,7 @@ h1{
   margin-bottom:6px;
   font-weight:700;
 }
-.adminFloatingAuth input,
+.adminInlineAuth input,
 .adminAddForm input,
 .adminItemFields input{
   width:100%;
@@ -985,6 +982,5 @@ h1{
   .ctaBand{grid-template-columns:1fr}
   .galleryGrid{grid-template-columns:1fr}
   .nav{gap:10px}
-  .adminFloatingAuth{position:static; width:100%; margin:10px auto 0;}
 }
 `;
