@@ -103,7 +103,6 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
             <a href="#galeria">Galeria</a>
-            <a href="#atendimento">Atendimento por voz</a>
             <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
               Orçamento no WhatsApp
             </a>
