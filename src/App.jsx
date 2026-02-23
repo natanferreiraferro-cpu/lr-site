@@ -92,6 +92,8 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
     <div className="page">
       <style>{css}</style>
 
+      <a className="skipLink" href="#conteudo-principal">Pular para conteúdo principal</a>
+
       {/* Topbar */}
       <header className="topbar">
         <div className="container topbarInner">
@@ -99,7 +101,7 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
             <img className="brandLogo" src="/logo.png" alt="LR Soluções Elétricas" />
           </a>
 
-          <nav className="nav">
+          <nav className="nav" aria-label="Navegação principal">
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
             <a href="#galeria">Galeria</a>
@@ -176,7 +178,7 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
       </section>
 
       {/* Especialidades */}
-      <main className="container">
+      <main id="conteudo-principal" className="container">
         <section id="especialidades" className="section">
           <div className="sectionHead">
             <h2>Nossas Especialidades</h2>
@@ -259,6 +261,7 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
             <voiceai-widget
               id="V2ViV2lkZ2V0VHlwZTpZd2RYNnc3"
               host="callx.aceleradoramx3.com"
+              aria-label="Widget de atendimento por voz da LR Soluções Elétricas"
             ></voiceai-widget>
           </div>
         </section>
@@ -719,6 +722,29 @@ h1{
   font-size:13px;
 }
 .footerInner{display:flex; justify-content:center; text-align:center}
+
+
+
+.skipLink{
+  position:absolute;
+  left:-9999px;
+  top:auto;
+}
+.skipLink:focus{
+  left:20px;
+  top:12px;
+  z-index:90;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#111114;
+}
+
+a:focus-visible,
+.btn:focus-visible{
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
 
 /* Responsive */
 @media (max-width: 980px){
