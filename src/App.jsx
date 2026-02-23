@@ -1,6 +1,10 @@
+import { useState } from "react";
+
 export default function App() {
   const whatsapp = "https://wa.me/5582999590131";
-
+  const [refName, setRefName] = useState("");
+  const [refPhone, setRefPhone] = useState("");
+  const [refCpf, setRefCpf] = useState("");
   const stats = [
     { value: "+3.200", label: "Clientes atendidos" },
     { value: "+2.000", label: "Usinas solares instaladas" },
@@ -49,6 +53,30 @@ export default function App() {
     },
   ];
 
+  const galleryImages = [
+    { src: "/projetos/projeto-01.jpg", alt: "Usina solar em solo com fileiras de painéis" },
+    { src: "/projetos/projeto-02.jpg", alt: "Sistema fotovoltaico em cobertura comercial" },
+    { src: "/projetos/projeto-03.jpg", alt: "Painéis solares em cobertura rural" },
+    { src: "/projetos/projeto-04.jpg", alt: "Usina solar com estrutura em solo" },
+    { src: "/projetos/projeto-05.jpg", alt: "Instalação de painéis em cobertura industrial" },
+    { src: "/projetos/projeto-06.jpg", alt: "Equipe técnica em atividade elétrica" },
+    { src: "/projetos/projeto-07.jpg", alt: "Logística de equipamentos para instalação solar" },
+    { src: "/projetos/projeto-08.jpg", alt: "Transformador em subestação" },
+    { src: "/projetos/projeto-09.jpg", alt: "Manutenção em painel elétrico" },
+    { src: "/projetos/projeto-10.jpg", alt: "Sistema residencial com equipe em campo" },
+    { src: "/projetos/projeto-11.jpg", alt: "Cobertura solar noturna" },
+    { src: "/projetos/projeto-12.jpg", alt: "Medição térmica em painel elétrico" },
+  ];
+
+  const referralMessage = encodeURIComponent(
+    `Olá! Quero solicitar um orçamento.
+Indicação:
+Nome: ${refName || "Não informado"}
+Número: ${refPhone || "Não informado"}
+CPF: ${refCpf || "Não informado"}`,
+  );
+  const whatsappReferralLink = `${whatsapp}?text=${referralMessage}`;
+
   return (
     <div className="page">
       <style>{css}</style>
@@ -63,6 +91,7 @@ export default function App() {
           <nav className="nav">
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
+            <a href="#galeria">Galeria</a>
             <a href="#atendimento">Atendimento por voz</a>
             <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
               Orçamento no WhatsApp
@@ -182,6 +211,32 @@ export default function App() {
           </div>
         </section>
 
+        <section id="galeria" className="section">
+          <div className="sectionHead">
+            <h2>Galeria de Projetos</h2>
+            <p>
+              Um recorte dos serviços executados pela nossa equipe em energia solar, subestações e manutenção
+              elétrica.
+            </p>
+          </div>
+
+          <div className="galleryGrid">
+            {galleryImages.map((item, index) => (
+              <figure className="galleryItem" key={item.src}>
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  loading="lazy"
+                  onError={(event) => {
+                    event.currentTarget.src = "/logo.png";
+                  }}
+                />
+                <figcaption>Projeto {String(index + 1).padStart(2, "0")}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
         {/* Widget */}
         <section id="atendimento" className="section">
           <div className="sectionHead">
@@ -215,9 +270,39 @@ export default function App() {
               </div>
             </div>
 
-            <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">
-              Solicitar orçamento
-            </a>
+            <form className="referralForm">
+              <div className="referralFormTitle">Quem indicou você?</div>
+              <label htmlFor="refName">Nome</label>
+              <input
+                id="refName"
+                type="text"
+                value={refName}
+                onChange={(event) => setRefName(event.target.value)}
+                placeholder="Nome da pessoa que indicou"
+              />
+
+              <label htmlFor="refPhone">Número</label>
+              <input
+                id="refPhone"
+                type="tel"
+                value={refPhone}
+                onChange={(event) => setRefPhone(event.target.value)}
+                placeholder="(82) 99999-9999"
+              />
+
+              <label htmlFor="refCpf">CPF</label>
+              <input
+                id="refCpf"
+                type="text"
+                value={refCpf}
+                onChange={(event) => setRefCpf(event.target.value)}
+                placeholder="000.000.000-00"
+              />
+
+              <a className="btn primary" href={whatsappReferralLink} target="_blank" rel="noreferrer">
+                Enviar dados e solicitar orçamento
+              </a>
+            </form>
           </div>
         </section>
       </main>
@@ -491,6 +576,33 @@ h1{
   padding: 14px;
 }
 
+/* Gallery */
+.galleryGrid{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:12px;
+}
+.galleryItem{
+  margin:0;
+  border:1px solid var(--line);
+  border-radius: 16px;
+  overflow:hidden;
+  background: rgba(255,255,255,.03);
+}
+.galleryItem img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  display:block;
+}
+.galleryItem figcaption{
+  padding:10px 12px;
+  font-size:12px;
+  color:var(--muted);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
 /* Final CTA */
 .finalCta{
   display:flex;
@@ -506,6 +618,36 @@ h1{
 .finalCta h2{margin:0 0 6px}
 .finalCta p{margin:0 0 12px; color:var(--muted); line-height:1.6}
 .meta{color: rgba(255,255,255,.88); font-size:13px; display:flex; flex-direction:column; gap:6px}
+
+.referralForm{
+  width: min(100%, 360px);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:16px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  background: rgba(0,0,0,.16);
+}
+.referralFormTitle{
+  font-size:15px;
+  font-weight:1000;
+  margin-bottom:4px;
+}
+.referralForm label{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+.referralForm input{
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.03);
+  color:var(--text);
+  padding:10px 12px;
+  font-size:14px;
+}
+
 
 /* Floating Whats */
 .fab{
@@ -538,6 +680,7 @@ h1{
   .heroGrid{grid-template-columns:1fr}
   .cards{grid-template-columns:1fr}
   .ctaBand{grid-template-columns:1fr}
+  .galleryGrid{grid-template-columns:1fr}
   .nav{gap:10px}
 }
 `;
