@@ -219,6 +219,34 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
         </div>
       </header>
 
+      {!isAdminLogged ? (
+        <form className="adminFloatingAuth" onSubmit={handleLogin}>
+          <label htmlFor="adminUser">Login</label>
+          <input
+            id="adminUser"
+            type="text"
+            value={loginUser}
+            onChange={(event) => setLoginUser(event.target.value)}
+            placeholder="Usuário"
+          />
+
+          <label htmlFor="adminPassword">Senha</label>
+          <input
+            id="adminPassword"
+            type="password"
+            value={loginPassword}
+            onChange={(event) => setLoginPassword(event.target.value)}
+            placeholder="Senha"
+          />
+
+          <button className="btn primary" type="submit">
+            Entrar
+          </button>
+
+          {authError ? <p className="adminError">{authError}</p> : null}
+        </form>
+      ) : null}
+
       {/* Hero */}
       <section id="inicio" className="hero">
         <div className="container heroGrid">
@@ -357,47 +385,7 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
         </section>
 
         <section id="admin-galeria" className="section">
-          <div className="sectionHead">
-            <h2>Área de gestão da galeria</h2>
-            <p>Faça login para editar, remover e adicionar novas fotos de projetos.</p>
-          </div>
-
-          {!isAdminLogged ? (
-            <form className="adminLogin" onSubmit={handleLogin}>
-              <div className="adminGrid">
-                <div>
-                  <label htmlFor="adminUser">Login</label>
-                  <input
-                    id="adminUser"
-                    type="text"
-                    value={loginUser}
-                    onChange={(event) => setLoginUser(event.target.value)}
-                    placeholder="Usuário"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="adminPassword">Senha</label>
-                  <input
-                    id="adminPassword"
-                    type="password"
-                    value={loginPassword}
-                    onChange={(event) => setLoginPassword(event.target.value)}
-                    placeholder="Senha"
-                  />
-                </div>
-              </div>
-
-              <button className="btn primary" type="submit">
-                Entrar
-              </button>
-
-              {authError ? <p className="adminError">{authError}</p> : null}
-              <p className="adminHint">
-                Acesso inicial: login <strong>admin</strong> e senha <strong>123456</strong>.
-              </p>
-            </form>
-          ) : (
+          {isAdminLogged ? (
             <div className="adminPanel">
               <div className="adminToolbar">
                 <strong>Editor da galeria ativo</strong>
@@ -466,16 +454,11 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
                 ))}
               </div>
             </div>
-          )}
+          ) : null}
         </section>
 
         {/* Widget */}
         <section id="atendimento" className="section">
-          <div className="sectionHead">
-            <h2>Atendimento por voz</h2>
-            <p>Se preferir, fale com nosso agente de voz para iniciar o atendimento.</p>
-          </div>
-
           <div className="widgetWrap">
             <voiceai-widget
               id="V2ViV2lkZ2V0VHlwZTpZd2RYNnc3"
@@ -862,7 +845,20 @@ h1{
 }
 
 /* Admin gallery */
-.adminLogin,
+
+.adminFloatingAuth{
+  position:fixed;
+  top:82px;
+  right:18px;
+  z-index:70;
+  width:min(92vw, 240px);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  background: rgba(10,10,12,.92);
+  backdrop-filter: blur(8px);
+}
+
 .adminPanel{
   margin-top:16px;
   border:1px solid var(--line);
@@ -870,12 +866,7 @@ h1{
   padding:16px;
   background: rgba(255,255,255,.03);
 }
-.adminGrid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:10px;
-}
-.adminLogin label,
+.adminFloatingAuth label,
 .adminAddForm label,
 .adminItemFields label{
   display:block;
@@ -884,7 +875,7 @@ h1{
   margin-bottom:6px;
   font-weight:700;
 }
-.adminLogin input,
+.adminFloatingAuth input,
 .adminAddForm input,
 .adminItemFields input{
   width:100%;
@@ -897,7 +888,6 @@ h1{
   margin-bottom:10px;
 }
 .adminError{color:#ff8f8f; font-weight:700; margin:8px 0 0}
-.adminHint{color:var(--muted); font-size:12px; margin:8px 0 0}
 .adminToolbar{
   display:flex;
   align-items:center;
@@ -995,5 +985,6 @@ h1{
   .ctaBand{grid-template-columns:1fr}
   .galleryGrid{grid-template-columns:1fr}
   .nav{gap:10px}
+  .adminFloatingAuth{position:static; width:100%; margin:10px auto 0;}
 }
 `;
