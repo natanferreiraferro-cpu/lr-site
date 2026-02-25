@@ -339,19 +339,7 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
           </div>
 
           <div className="galleryGrid">
-            {galleryImages.map((item, index) => (
-              <figure className="galleryItem" key={item.src}>
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  loading="lazy"
-                  onError={(event) => {
-                    event.currentTarget.src = "/logo.png";
-                  }}
-                />
-                <figcaption>Projeto {String(index + 1).padStart(2, "0")}</figcaption>
-              </figure>
-            ))}
+            <div className="galleryEmpty">As imagens da galeria foram removidas.</div>
           </div>
         </section>
 
@@ -814,24 +802,13 @@ h1{
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap:12px;
 }
-.galleryItem{
-  margin:0;
+.galleryEmpty{
   border:1px solid var(--line);
-  border-radius: 16px;
-  overflow:hidden;
+  border-radius:16px;
   background: rgba(255,255,255,.03);
-}
-.galleryItem img{
-  width:100%;
-  height:220px;
-  object-fit:cover;
-  display:block;
-}
-.galleryItem figcaption{
-  padding:10px 12px;
-  font-size:12px;
   color:var(--muted);
-  border-top:1px solid rgba(255,255,255,.08);
+  padding:22px;
+  text-align:center;
 }
 
 /* Admin gallery */
