@@ -22,8 +22,7 @@ const defaultGalleryImages = [
 export default function App() {
   const whatsapp = "https://wa.me/5582999390131";
   const [refName, setRefName] = useState("");
-  const [refPhone, setRefPhone] = useState("");
-  const [refCpf, setRefCpf] = useState("");
+  const [refCode, setRefCode] = useState("");
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [energyCost, setEnergyCost] = useState("");
@@ -187,8 +186,7 @@ export default function App() {
 
 Indicação:
 Nome: ${refName || "Não informado"}
-Número: ${refPhone || "Não informado"}
-CPF: ${refCpf || "Não informado"}
+Código de indicação: ${refCode || "Não informado"}
 
 Novo cliente:
 Nome: ${clientName || "Não informado"}
@@ -469,22 +467,13 @@ Gasto mensal de energia: ${energyCost || "Não informado"}`,
                 placeholder="Nome da pessoa que indicou"
               />
 
-              <label htmlFor="refPhone">Número</label>
+              <label htmlFor="refCode">Código de indicação</label>
               <input
-                id="refPhone"
-                type="tel"
-                value={refPhone}
-                onChange={(event) => setRefPhone(event.target.value)}
-                placeholder="(82) 99999-9999"
-              />
-
-              <label htmlFor="refCpf">CPF</label>
-              <input
-                id="refCpf"
+                id="refCode"
                 type="text"
-                value={refCpf}
-                onChange={(event) => setRefCpf(event.target.value)}
-                placeholder="000.000.000-00"
+                value={refCode}
+                onChange={(event) => setRefCode(event.target.value)}
+                placeholder="Ex: IND-2025-001"
               />
 
               <div className="referralDivider" aria-hidden="true" />
