@@ -1,6 +1,55 @@
-export default function App() {
-  const whatsapp = "https://wa.me/5582999590131";
+import { useEffect, useState } from "react";
 
+const FIRST_GALLERY_IMAGE = "/logo.png";
+const GALLERY_STORAGE_KEY = "lr-gallery-images-v1";
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "123456";
+const defaultGalleryImages = [
+  { src: FIRST_GALLERY_IMAGE, alt: "Usina solar em solo com fileiras de painéis" },
+  { src: "/projetos/projeto-02.jpg", alt: "Sistema fotovoltaico em cobertura comercial" },
+  { src: "/projetos/projeto-03.jpg", alt: "Painéis solares em cobertura rural" },
+  { src: "/projetos/projeto-04.jpg", alt: "Usina solar com estrutura em solo" },
+  { src: "/projetos/projeto-05.jpg", alt: "Instalação de painéis em cobertura industrial" },
+  { src: "/projetos/projeto-06.jpg", alt: "Equipe técnica em atividade elétrica" },
+  { src: "/projetos/projeto-07.jpg", alt: "Logística de equipamentos para instalação solar" },
+  { src: "/projetos/projeto-08.jpg", alt: "Transformador em subestação" },
+  { src: "/projetos/projeto-09.jpg", alt: "Manutenção em painel elétrico" },
+  { src: "/projetos/projeto-10.jpg", alt: "Sistema residencial com equipe em campo" },
+  { src: "/projetos/projeto-11.jpg", alt: "Cobertura solar noturna" },
+  { src: "/projetos/projeto-12.jpg", alt: "Medição térmica em painel elétrico" },
+];
+
+export default function App() {
+  const whatsapp = "https://wa.me/5582999390131";
+  const [refName, setRefName] = useState("");
+  const [refCode, setRefCode] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+  const [energyCost, setEnergyCost] = useState("");
+  const [galleryImages, setGalleryImages] = useState(() => {
+    try {
+      const savedGallery = localStorage.getItem(GALLERY_STORAGE_KEY);
+
+      if (!savedGallery) {
+        return defaultGalleryImages;
+      }
+
+      const parsed = JSON.parse(savedGallery);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    } catch {
+      return defaultGalleryImages;
+    }
+
+    return defaultGalleryImages;
+  });
+  const [loginUser, setLoginUser] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [isAdminLogged, setIsAdminLogged] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
+  const [newImageTitle, setNewImageTitle] = useState("");
   const stats = [
     { value: "+3.200", label: "Clientes atendidos" },
     { value: "+2.000", label: "Usinas solares instaladas" },
@@ -49,6 +98,103 @@ export default function App() {
     },
   ];
 
+  useEffect(() => {
+    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(galleryImages));
+  }, [galleryImages]);
+
+  function handleLogin(event) {
+    event.preventDefault();
+    if (loginUser === ADMIN_USERNAME && loginPassword === ADMIN_PASSWORD) {
+      setIsAdminLogged(true);
+      setAuthError("");
+      setLoginPassword("");
+      return;
+    }
+
+    setAuthError("Login ou senha inválidos.");
+  }
+
+  function handleLogout() {
+    setIsAdminLogged(false);
+    setLoginUser("");
+    setLoginPassword("");
+  }
+
+  function handleGalleryFieldChange(index, field, value) {
+    setGalleryImages((current) =>
+      current.map((item, currentIndex) =>
+        currentIndex === index
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item,
+      ),
+    );
+  }
+
+  function handleRemoveImage(index) {
+    setGalleryImages((current) => current.filter((_, currentIndex) => currentIndex !== index));
+  }
+
+  function handleAddImage(event) {
+    event.preventDefault();
+
+    if (!newImageUrl.trim()) {
+      return;
+    }
+
+    setGalleryImages((current) => [
+      ...current,
+      {
+        src: newImageUrl.trim(),
+        alt: newImageTitle.trim() || `Projeto ${String(current.length + 1).padStart(2, "0")}`,
+      },
+    ]);
+
+    setNewImageUrl("");
+    setNewImageTitle("");
+  }
+
+  function handleImageUpload(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        return;
+      }
+
+      setGalleryImages((current) => [
+        ...current,
+        {
+          src: reader.result,
+          alt: file.name || `Projeto ${String(current.length + 1).padStart(2, "0")}`,
+        },
+      ]);
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  }
+
+  const referralMessage = encodeURIComponent(
+    `Olá! Quero solicitar um orçamento.
+
+Indicação:
+Nome: ${refName || "Não informado"}
+Código de indicação: ${refCode || "Não informado"}
+
+Novo cliente:
+Nome: ${clientName || "Não informado"}
+Telefone: ${clientPhone || "Não informado"}
+Gasto mensal de energia: ${energyCost || "Não informado"}`,
+  );
+  const whatsappReferralLink = `${whatsapp}?text=${referralMessage}`;
+
   return (
     <div className="page">
       <style>{css}</style>
@@ -63,13 +209,14 @@ export default function App() {
           <nav className="nav">
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
-            <a href="#atendimento">Atendimento por voz</a>
+            <a href="#galeria">Galeria</a>
             <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
               Orçamento no WhatsApp
             </a>
           </nav>
         </div>
       </header>
+
 
       {/* Hero */}
       <section id="inicio" className="hero">
@@ -182,13 +329,107 @@ export default function App() {
           </div>
         </section>
 
-        {/* Widget */}
-        <section id="atendimento" className="section">
+        <section id="galeria" className="section">
           <div className="sectionHead">
-            <h2>Atendimento por voz</h2>
-            <p>Se preferir, fale com nosso agente de voz para iniciar o atendimento.</p>
+            <h2>Galeria de Projetos</h2>
+            <p>
+              Um recorte dos serviços executados pela nossa equipe em energia solar, subestações e manutenção
+              elétrica.
+            </p>
           </div>
 
+          <div className="galleryGrid">
+            {galleryImages.map((item, index) => (
+              <figure className="galleryItem" key={`${item.src}-${index}`}>
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  loading="lazy"
+                  onError={(event) => {
+                    event.currentTarget.src = "/logo.png";
+                  }}
+                />
+                <figcaption>Projeto {String(index + 1).padStart(2, "0")}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
+        <section id="admin-galeria" className="section">
+          {isAdminLogged ? (
+            <div className="adminPanel">
+              <div className="adminToolbar">
+                <strong>Editor da galeria ativo</strong>
+                <button className="btn" type="button" onClick={handleLogout}>
+                  Sair
+                </button>
+              </div>
+
+              <form className="adminAddForm" onSubmit={handleAddImage}>
+                <label htmlFor="newImageUrl">Nova foto (cole a URL da imagem)</label>
+                <input
+                  id="newImageUrl"
+                  type="url"
+                  value={newImageUrl}
+                  onChange={(event) => setNewImageUrl(event.target.value)}
+                  placeholder="https://..."
+                />
+
+                <label htmlFor="newImageTitle">Título/descrição (opcional)</label>
+                <input
+                  id="newImageTitle"
+                  type="text"
+                  value={newImageTitle}
+                  onChange={(event) => setNewImageTitle(event.target.value)}
+                  placeholder="Ex: Usina Solar - Maceió"
+                />
+
+                <div className="adminActions">
+                  <button className="btn primary" type="submit">
+                    Adicionar por URL
+                  </button>
+
+                  <label className="btn" htmlFor="uploadImageInput">
+                    Enviar arquivo
+                  </label>
+                  <input id="uploadImageInput" type="file" accept="image/*" onChange={handleImageUpload} />
+                </div>
+              </form>
+
+              <div className="adminList">
+                {galleryImages.map((image, index) => (
+                  <article className="adminItem" key={`${image.src}-${index}`}>
+                    <img src={image.src} alt={image.alt} />
+                    <div className="adminItemFields">
+                      <label htmlFor={`img-src-${index}`}>URL da imagem</label>
+                      <input
+                        id={`img-src-${index}`}
+                        type="text"
+                        value={image.src}
+                        onChange={(event) => handleGalleryFieldChange(index, "src", event.target.value)}
+                      />
+
+                      <label htmlFor={`img-alt-${index}`}>Descrição</label>
+                      <input
+                        id={`img-alt-${index}`}
+                        type="text"
+                        value={image.alt}
+                        onChange={(event) => handleGalleryFieldChange(index, "alt", event.target.value)}
+                      />
+
+                      <button className="btn" type="button" onClick={() => handleRemoveImage(index)}>
+                        Remover foto
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </section>
+
+        {/* Widget */}
+        <section id="atendimento" className="section">
           <div className="widgetWrap">
             <voiceai-widget
               id="V2ViV2lkZ2V0VHlwZTpZd2RYNnc3"
@@ -215,17 +456,92 @@ export default function App() {
               </div>
             </div>
 
-            <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">
-              Solicitar orçamento
-            </a>
+            <form className="referralForm">
+              <div className="referralFormTitle">Quem indicou você?</div>
+              <label htmlFor="refName">Nome</label>
+              <input
+                id="refName"
+                type="text"
+                value={refName}
+                onChange={(event) => setRefName(event.target.value)}
+                placeholder="Nome da pessoa que indicou"
+              />
+
+              <label htmlFor="refCode">Código de indicação</label>
+              <input
+                id="refCode"
+                type="text"
+                value={refCode}
+                onChange={(event) => setRefCode(event.target.value)}
+                placeholder="Ex: IND-2025-001"
+              />
+
+              <div className="referralDivider" aria-hidden="true" />
+
+              <div className="referralFormTitle">Dados do novo cliente</div>
+              <label htmlFor="clientName">Nome</label>
+              <input
+                id="clientName"
+                type="text"
+                value={clientName}
+                onChange={(event) => setClientName(event.target.value)}
+                placeholder="Nome completo do cliente"
+              />
+
+              <label htmlFor="clientPhone">Telefone</label>
+              <input
+                id="clientPhone"
+                type="tel"
+                value={clientPhone}
+                onChange={(event) => setClientPhone(event.target.value)}
+                placeholder="(82) 99999-9999"
+              />
+
+              <label htmlFor="energyCost">Quanto gasta de energia</label>
+              <input
+                id="energyCost"
+                type="text"
+                value={energyCost}
+                onChange={(event) => setEnergyCost(event.target.value)}
+                placeholder="Ex: R$ 650/mês"
+              />
+
+              <a className="btn primary" href={whatsappReferralLink} target="_blank" rel="noreferrer">
+                Enviar dados e solicitar orçamento
+              </a>
+            </form>
           </div>
+
+          {!isAdminLogged ? (
+            <form className="adminInlineAuth" onSubmit={handleLogin}>
+              <label htmlFor="adminUser">Login</label>
+              <input
+                id="adminUser"
+                type="text"
+                value={loginUser}
+                onChange={(event) => setLoginUser(event.target.value)}
+                placeholder="Usuário"
+              />
+
+              <label htmlFor="adminPassword">Senha</label>
+              <input
+                id="adminPassword"
+                type="password"
+                value={loginPassword}
+                onChange={(event) => setLoginPassword(event.target.value)}
+                placeholder="Senha"
+              />
+
+              <button className="btn primary" type="submit">
+                Entrar
+              </button>
+
+              {authError ? <p className="adminError">{authError}</p> : null}
+            </form>
+          ) : null}
         </section>
       </main>
 
-      {/* Floating WhatsApp */}
-      <a className="fab" href={whatsapp} target="_blank" rel="noreferrer" aria-label="WhatsApp">
-        WhatsApp
-      </a>
 
       <footer className="footer">
         <div className="container footerInner">
@@ -491,6 +807,101 @@ h1{
   padding: 14px;
 }
 
+/* Gallery */
+.galleryGrid{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:12px;
+}
+.galleryItem{
+  margin:0;
+  border:1px solid var(--line);
+  border-radius: 16px;
+  overflow:hidden;
+  background: rgba(255,255,255,.03);
+}
+.galleryItem img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  display:block;
+}
+.galleryItem figcaption{
+  padding:10px 12px;
+  font-size:12px;
+  color:var(--muted);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+/* Admin gallery */
+
+.adminInlineAuth{
+  margin-top:14px;
+  width:min(100%, 360px);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  background: rgba(255,255,255,.03);
+}
+
+.adminPanel{
+  margin-top:16px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  background: rgba(255,255,255,.03);
+}
+.adminInlineAuth label,
+.adminAddForm label,
+.adminItemFields label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px;
+  font-weight:700;
+}
+.adminInlineAuth input,
+.adminAddForm input,
+.adminItemFields input{
+  width:100%;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.03);
+  color:var(--text);
+  padding:10px 12px;
+  font-size:14px;
+  margin-bottom:10px;
+}
+.adminError{color:#ff8f8f; font-weight:700; margin:8px 0 0}
+.adminToolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.adminAddForm{margin-bottom:12px}
+.adminActions{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+#uploadImageInput{display:none}
+.adminList{display:grid; gap:10px}
+.adminItem{
+  display:grid;
+  grid-template-columns: 160px 1fr;
+  gap:10px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;
+  padding:10px;
+  background: rgba(0,0,0,.2);
+}
+.adminItem img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.08);
+}
+
 /* Final CTA */
 .finalCta{
   display:flex;
@@ -507,21 +918,41 @@ h1{
 .finalCta p{margin:0 0 12px; color:var(--muted); line-height:1.6}
 .meta{color: rgba(255,255,255,.88); font-size:13px; display:flex; flex-direction:column; gap:6px}
 
-/* Floating Whats */
-.fab{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:50;
-  padding:12px 14px;
-  border-radius:999px;
-  background: linear-gradient(135deg, var(--brand), var(--brandDark));
-  color:#1b120a;
-  font-weight:1100;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(0,0,0,.10);
+.referralForm{
+  width: min(100%, 360px);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:16px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  background: rgba(0,0,0,.16);
 }
-.fab:hover{transform: translateY(-1px)}
+.referralFormTitle{
+  font-size:15px;
+  font-weight:1000;
+  margin-bottom:4px;
+}
+.referralDivider{
+  height:1px;
+  background: rgba(255,255,255,.14);
+  margin:6px 0 2px;
+}
+.referralForm label{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+.referralForm input{
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.03);
+  color:var(--text);
+  padding:10px 12px;
+  font-size:14px;
+}
+
+
 
 /* Footer */
 .footer{
@@ -538,6 +969,7 @@ h1{
   .heroGrid{grid-template-columns:1fr}
   .cards{grid-template-columns:1fr}
   .ctaBand{grid-template-columns:1fr}
+  .galleryGrid{grid-template-columns:1fr}
   .nav{gap:10px}
 }
 `;
