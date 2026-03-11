@@ -202,7 +202,7 @@ export default function App() {
 
         <section id="indicacao" className="container section referralSection">
           <span className="sectionTag">FORMULÁRIO DE INDICAÇÃO</span>
-          <h2>Indique um cliente e ganhe rastreabilidade pelo seu código</h2>
+          <h2>Programa de Indicação Premiada: indique e ganhe benefícios exclusivos.</h2>
 
           <form className="referralForm" onSubmit={handleReferralSubmit}>
             <div className="fieldGroup">
