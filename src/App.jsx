@@ -1,5 +1,72 @@
+import { useState } from "react";
+
+const INDICATOR_CODES_KEY = "lr_indicator_codes_v1";
+
+const normalizeIndicatorName = (name) => name.trim().toLowerCase().replace(/\s+/g, " ");
+
+const createIndicatorCode = () => `LR-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+
+const getStoredCodes = () => {
+  try {
+    return JSON.parse(localStorage.getItem(INDICATOR_CODES_KEY) || "{}");
+  } catch {
+    return {};
+  }
+};
+
+const saveStoredCodes = (codes) => {
+  localStorage.setItem(INDICATOR_CODES_KEY, JSON.stringify(codes));
+};
+
 export default function App() {
   const whatsapp = "https://wa.me/558299390131";
+  const [indicatorName, setIndicatorName] = useState("");
+  const [indicatorCode, setIndicatorCode] = useState("");
+  const [referral, setReferral] = useState({
+    indicadoNome: "",
+    indicadoTelefone: "",
+    gastoMensal: "",
+  });
+
+  const handleIndicatorNameChange = (event) => {
+    const value = event.target.value;
+    setIndicatorName(value);
+
+    const normalized = normalizeIndicatorName(value);
+    if (!normalized) {
+      setIndicatorCode("");
+      return;
+    }
+
+    const codes = getStoredCodes();
+    if (!codes[normalized]) {
+      codes[normalized] = createIndicatorCode();
+      saveStoredCodes(codes);
+    }
+
+    setIndicatorCode(codes[normalized]);
+  };
+
+  const handleReferralChange = (event) => {
+    const { name, value } = event.target;
+    setReferral((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleReferralSubmit = (event) => {
+    event.preventDefault();
+
+    const message = [
+      "Olá! Nova indicação recebida:",
+      `Indicador: ${indicatorName}`,
+      `Código do indicador: ${indicatorCode}`,
+      `Indicado: ${referral.indicadoNome}`,
+      `Telefone do indicado: ${referral.indicadoTelefone}`,
+      `Gasto de energia/mês: ${referral.gastoMensal}`,
+    ].join("\n");
+
+    const whatsappUrl = `${whatsapp}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  };
 
   const services = [
     {
@@ -44,6 +111,7 @@ export default function App() {
             <a href="#servicos">Serviços</a>
             <a href="#sobre">Sobre</a>
             <a href="#diferenciais">Diferenciais</a>
+            <a href="#indicacao">Indicação</a>
             <a href="#contato">Contato</a>
           </nav>
 
@@ -132,6 +200,76 @@ export default function App() {
           />
         </section>
 
+        <section id="indicacao" className="container section referralSection">
+          <span className="sectionTag">FORMULÁRIO DE INDICAÇÃO</span>
+          <h2>Indique um cliente e ganhe rastreabilidade pelo seu código</h2>
+
+          <form className="referralForm" onSubmit={handleReferralSubmit}>
+            <div className="fieldGroup">
+              <label htmlFor="indicatorName">Nome do indicador</label>
+              <input
+                id="indicatorName"
+                required
+                type="text"
+                placeholder="Digite seu nome"
+                value={indicatorName}
+                onChange={handleIndicatorNameChange}
+              />
+            </div>
+
+            <div className="fieldGroup">
+              <label htmlFor="indicatorCode">Código do indicador (gerado automaticamente)</label>
+              <input
+                id="indicatorCode"
+                type="text"
+                value={indicatorCode || "Preencha o nome para gerar"}
+                readOnly
+              />
+            </div>
+
+            <div className="fieldGroup">
+              <label htmlFor="indicadoNome">Nome do indicado</label>
+              <input
+                id="indicadoNome"
+                required
+                type="text"
+                name="indicadoNome"
+                value={referral.indicadoNome}
+                onChange={handleReferralChange}
+                placeholder="Nome completo"
+              />
+            </div>
+
+            <div className="fieldGroup">
+              <label htmlFor="indicadoTelefone">Telefone do indicado</label>
+              <input
+                id="indicadoTelefone"
+                required
+                type="tel"
+                name="indicadoTelefone"
+                value={referral.indicadoTelefone}
+                onChange={handleReferralChange}
+                placeholder="(82) 99999-9999"
+              />
+            </div>
+
+            <div className="fieldGroup fullWidth">
+              <label htmlFor="gastoMensal">Quanto gasta de energia por mês?</label>
+              <input
+                id="gastoMensal"
+                required
+                type="text"
+                name="gastoMensal"
+                value={referral.gastoMensal}
+                onChange={handleReferralChange}
+                placeholder="Ex.: R$ 850,00"
+              />
+            </div>
+
+            <button type="submit" className="btn primary">Enviar indicação no WhatsApp</button>
+          </form>
+        </section>
+
         <section id="contato" className="container finalCta">
           <h2>Pronto para transformar a energia do seu negócio?</h2>
           <p>E-mail: engenharialrsolar@gmail.com • Suporte: (82) 99939-0130</p>
@@ -172,7 +310,7 @@ a{text-decoration:none;color:inherit}
 h1{font-size:62px;line-height:1.02;margin:18px 0 14px}
 .hero p{color:#efefef;max-width:58ch}
 .heroBtns{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
-.btn{padding:12px 16px;border-radius:7px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center;transition:transform .22s ease,box-shadow .22s ease,filter .22s ease}
+.btn{padding:12px 16px;border-radius:7px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center;transition:transform .22s ease,box-shadow .22s ease,filter .22s ease;border:none;cursor:pointer}
 .btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 24px rgba(0,0,0,.25);filter:brightness(1.03)}
 .btn.primary{background:#f3651e;color:#fff}.btn.light{background:#fff;color:#111}
 .contactStrip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:-36px;position:relative;z-index:2}
@@ -195,10 +333,17 @@ h1{font-size:62px;line-height:1.02;margin:18px 0 14px}
 .split p{line-height:1.6;color:#333}
 .values{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:22px 18px 50px}.values article{background:#f3651e;color:#fff;border-radius:10px;padding:20px;text-align:center;transition:transform .24s ease}.values article:hover{transform:translateY(-5px)}.values h3{margin:0 0 8px;font-size:30px}.values p{margin:0;font-size:13px}
 .why{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;padding:0}.whyLeft{background:#22252c;color:#fff;padding:40px 22px}.whyLeft h2{font-size:44px;margin:0 0 14px}.whyLeft ul{margin:0;padding-left:18px;display:grid;gap:10px;line-height:1.5}.why img{width:100%;height:100%;object-fit:cover;min-height:460px;transition:transform .45s ease}.why img:hover{transform:scale(1.03)}
+.referralSection h2{font-size:38px;max-width:860px}
+.referralForm{margin-top:14px;background:#fff;border-radius:14px;padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;box-shadow:0 16px 26px rgba(0,0,0,.12)}
+.fieldGroup{display:flex;flex-direction:column;gap:6px}
+.fieldGroup label{font-size:13px;font-weight:700;color:#222}
+.fieldGroup input{height:44px;border:1px solid #d6d6d6;border-radius:8px;padding:0 12px;font-size:14px;transition:border-color .2s ease,box-shadow .2s ease}
+.fieldGroup input:focus{outline:none;border-color:#f3651e;box-shadow:0 0 0 3px rgba(243,101,30,.2)}
+.fullWidth{grid-column:1/-1}
+.referralForm .btn{justify-self:start}
 .finalCta{text-align:center;padding:60px 18px 70px}.finalCta h2{font-size:48px;margin:0 0 8px}.finalCta p{color:#444;margin-bottom:20px}
 .footer{background:#101216;color:#fff;padding:36px 0}.footerInner{display:flex;justify-content:space-between;gap:20px;align-items:center}.footer img{height:72px;background:#f3651e;padding:6px;border-radius:8px;transition:transform .3s ease}.footer img:hover{transform:rotate(-2deg) scale(1.03)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes zoomHero{from{background-size:100%}to{background-size:106%}}
-@media (max-width:1000px){h1{font-size:44px}.cards{grid-template-columns:1fr 1fr}.split,.why,.contactStrip,.values{grid-template-columns:1fr}.menu{display:none}}
+@media (max-width:1000px){h1{font-size:44px}.cards{grid-template-columns:1fr 1fr}.split,.why,.contactStrip,.values,.referralForm{grid-template-columns:1fr}.menu{display:none}.section h2{font-size:34px}.finalCta h2{font-size:38px}}
 `;
-
