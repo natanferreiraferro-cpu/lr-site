@@ -1,325 +1,152 @@
-import { useState } from "react";
-
 export default function App() {
   const whatsapp = "https://wa.me/558299390131";
-  const [indicationForm, setIndicationForm] = useState({
-    nomeIndicante: "",
-    whatsappIndicante: "",
-    nomeIndicado: "",
-    contatoIndicado: "",
-    observacoes: "",
-  });
-
-  const stats = [
-    { value: "+3.200", label: "Clientes atendidos" },
-    { value: "+2.000", label: "Usinas solares instaladas" },
-    { value: "17.200.000", label: "kWh gerados por ano" },
-    { value: "+18", label: "Anos de experiência" },
-  ];
-
-  const highlights = [
-    "Maior empresa de energia solar de Alagoas",
-    "Maior sistema solar Grid Zero do Brasil",
-    "Única integradora WEG no estado",
-    "Equipe 100% própria (engenharia, execução, vendas e pós-venda)",
-    "Projetos personalizados, eficientes e sustentáveis",
-  ];
 
   const services = [
     {
-      title: "Energia Solar",
-      desc: "Sistemas fotovoltaicos completos: projeto, instalação e homologação com foco em performance e retorno.",
-      icon: "☀️",
+      title: "Grandes Projetos Solar",
+      desc: "Desenvolvimento e execução de usinas solares de grande porte, otimizando o consumo e gerando economia significativa.",
+      img: "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=700&q=80",
     },
     {
-      title: "Subestações",
-      desc: "Projeto, montagem, comissionamento e manutenção de média e alta tensão com segurança e confiabilidade.",
-      icon: "🏭",
+      title: "Projetos Elétricos de Grande Porte",
+      desc: "Engenharia e instalação de sistemas elétricos completos para indústrias e grandes comércios.",
+      img: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=700&q=80",
     },
     {
-      title: "Laudos Elétricos",
-      desc: "Laudos e medições com instrumentos específicos para conformidade e diagnóstico preciso.",
-      icon: "📋",
+      title: "Execução de Grandes Instalações",
+      desc: "Montagens e manutenção de subestações com foco em segurança, durabilidade e conformidade técnica.",
+      img: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=700&q=80",
     },
     {
-      title: "Consultoria Especializada",
-      desc: "Diagnóstico energético, otimização de sistemas e redução de custos operacionais com engenharia.",
-      icon: "⚙️",
-    },
-    {
-      title: "Perícia Judicial",
-      desc: "Assistência técnica em processos judiciais e extrajudiciais com pareceres e laudos fundamentados.",
-      icon: "⚖️",
-    },
-    {
-      title: "Recarga Veicular",
-      desc: "Implantação de estações de recarga para veículos elétricos em condomínios, empresas e comércios.",
-      icon: "🔌",
+      title: "Laudos, Consultoria e Perícia Judicial",
+      desc: "Especialistas para laudos, consultoria de eficiência e perícias judiciais no setor elétrico.",
+      img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=700&q=80",
     },
   ];
 
-  const handleIndicationChange = (event) => {
-    const { name, value } = event.target;
-    setIndicationForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleIndicationSubmit = (event) => {
-    event.preventDefault();
-
-    const message = [
-      "Olá! Quero fazer uma indicação para a LR Soluções Elétricas:",
-      `Nome de quem indica: ${indicationForm.nomeIndicante}`,
-      `WhatsApp de quem indica: ${indicationForm.whatsappIndicante}`,
-      `Nome do indicado: ${indicationForm.nomeIndicado}`,
-      `Contato do indicado: ${indicationForm.contatoIndicado}`,
-      `Observações: ${indicationForm.observacoes || "Sem observações."}`,
-    ].join("\n");
-
-    const whatsappUrl = `${whatsapp}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  };
+  const reasons = [
+    "Experiência comprovada com mais de 17 anos em engenharia e energia.",
+    "Integrador WEG exclusivo, garantindo soluções de alta performance.",
+    "Qualidade e eficiência para projetos residenciais, comerciais e industriais.",
+    "Suporte completo do orçamento à manutenção e pós-venda.",
+  ];
 
   return (
-    <div className="page">
+    <div className="site">
       <style>{css}</style>
 
-      <a className="skipLink" href="#conteudo-principal">Pular para conteúdo principal</a>
-
-      {/* Topbar */}
       <header className="topbar">
         <div className="container topbarInner">
-          <a className="brand" href="#inicio" aria-label="LR Soluções Elétricas">
-            <img className="brandLogo" src="/logo.png" alt="LR Soluções Elétricas" />
-          </a>
+          <img src="/logo.png" className="logo" alt="LR Soluções Elétricas" />
 
-          <nav className="nav" aria-label="Navegação principal">
-            <a href="#especialidades">Especialidades</a>
-            <a href="#numeros">Números</a>
-            <a href="#indicacao">Indicação</a>
-            <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
-              Orçamento no WhatsApp
-            </a>
+          <nav className="menu">
+            <a href="#inicio">Início</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#diferenciais">Diferenciais</a>
+            <a href="#contato">Contato</a>
           </nav>
+
+          <a className="topCta" href={whatsapp} target="_blank" rel="noreferrer">Fale conosco</a>
         </div>
       </header>
 
-      {/* Hero */}
       <section id="inicio" className="hero">
-        <div className="container heroGrid">
-          <div className="heroLeft">
-            <div className="pill">
-              <span className="pillDot" />
-              Engenharia Elétrica • Energia Solar
-            </div>
-
-            <h1>
-              Engenharia de Alta Performance
-              <span className="h1Accent"> com foco em segurança e resultado</span>.
-            </h1>
-
-            <p className="subtitle">
-              Soluções completas em engenharia elétrica e energia solar — do projeto à execução industrial,
-              com equipe própria e padrão técnico.
-            </p>
-
-            <div className="ctaRow">
-              <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">
-                Solicitar orçamento
-              </a>
-              <a className="btn ghost" href="#especialidades">
-                Ver especialidades
-              </a>
-            </div>
-
-            <div className="chips">
-              {highlights.slice(0, 4).map((t) => (
-                <span key={t}>{t}</span>
-              ))}
-            </div>
-          </div>
-
-          <div className="heroRight">
-            <div className="panelTitle">Atendimento em todo o Brasil</div>
-            <div className="panelText">
-              Projetos para clientes residenciais, comerciais e industriais — com foco em confiabilidade,
-              eficiência energética e retorno.
-            </div>
-
-            <div className="stats" id="numeros">
-              {stats.map((s) => (
-                <div className="stat" key={s.label}>
-                  <div className="statValue">{s.value}</div>
-                  <div className="statLabel">{s.label}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="panelCta">
-              <div className="panelCtaText">
-                <strong>Pronto para iniciar seu projeto?</strong>
-                <span>Fale com nossa equipe técnica agora.</span>
-              </div>
-              <a className="btn small primary" href={whatsapp} target="_blank" rel="noreferrer">
-                Falar agora
-              </a>
-            </div>
+        <div className="overlay" />
+        <div className="container heroContent">
+          <span className="tag">LR SOLUÇÕES ELÉTRICAS</span>
+          <h1>Seu Integrador WEG para Projetos de Energia Solar e Elétrica em Alagoas</h1>
+          <p>
+            Mais de 17 anos de excelência e a maior estrutura do estado, garantindo qualidade,
+            eficiência e economia para o seu negócio.
+          </p>
+          <div className="heroBtns">
+            <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">Fale com um especialista</a>
+            <a className="btn light" href="#contato">Solicite seu orçamento</a>
           </div>
         </div>
       </section>
 
-      {/* Especialidades */}
-      <main id="conteudo-principal" className="container">
-        <section id="especialidades" className="section">
+      <section className="contactStrip container">
+        <article><strong>Atendimento</strong><span>WhatsApp: 82 99939-0130</span></article>
+        <article><strong>E-mail</strong><span>engenharialrsolar@gmail.com</span></article>
+        <article><strong>Localização</strong><span>AL-110, Arapiraca - AL</span></article>
+      </section>
+
+      <main className="lightSection">
+        <section id="servicos" className="container section">
+          <span className="sectionTag">SERVIÇOS DA EMPRESA</span>
           <div className="sectionHead">
-            <h2>Nossas Especialidades</h2>
-            <p>
-              Projetos personalizados, eficientes e sustentáveis — seguindo normas técnicas e boas práticas.
-            </p>
+            <h2>Soluções Elétricas e Solares de Alta Performance para o seu negócio</h2>
+            <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">Fale com um especialista</a>
           </div>
 
           <div className="cards">
-            {services.map((srv) => (
-              <article className="card" key={srv.title}>
-                <div className="cardTop">
-                  <div className="icon">{srv.icon}</div>
-                  <h3>{srv.title}</h3>
+            {services.map((service) => (
+              <article key={service.title} className="card">
+                <img src={service.img} alt={service.title} />
+                <div className="cardBody">
+                  <h3>{service.title}</h3>
+                  <p>{service.desc}</p>
+                  <a href={whatsapp} target="_blank" rel="noreferrer">Solicitar orçamento</a>
                 </div>
-                <p>{srv.desc}</p>
               </article>
             ))}
           </div>
         </section>
 
-        {/* Diferenciais */}
-        <section className="section">
-          <div className="ctaBand">
-            <div className="ctaBandText">
-              <h2>Diferenciais que fazem a diferença</h2>
-              <ul>
-                {highlights.map((t) => (
-                  <li key={t}>{t}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="ctaBandBox">
-              <div className="ctaBandBoxTitle">Orçamento rápido</div>
-              <div className="ctaBandBoxText">
-                Envie sua demanda e receba atendimento direto no WhatsApp.
-              </div>
-              <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">
-                Chamar no WhatsApp
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section id="indicacao" className="section">
-          <div className="sectionHead">
-            <h2>Formulário de Indicação</h2>
+        <section id="sobre" className="container section split">
+          <img
+            src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80"
+            alt="Profissional em obra"
+          />
+          <div>
+            <span className="sectionTag">SOBRE</span>
+            <h2>LR Soluções Elétricas: Excelência e inovação em energia</h2>
             <p>
-              Indique um cliente e nossa equipe entra em contato. Ao enviar, abrimos o WhatsApp com
-              sua mensagem preenchida automaticamente.
+              Com mais de 17 anos de história, atuamos com projetos de energia solar, subestações,
+              laudos técnicos e instalações industriais, oferecendo soluções completas e personalizadas.
             </p>
+            <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">Fale Conosco</a>
           </div>
-
-          <form className="indicationForm" onSubmit={handleIndicationSubmit}>
-            <label>
-              Seu nome
-              <input
-                required
-                type="text"
-                name="nomeIndicante"
-                value={indicationForm.nomeIndicante}
-                onChange={handleIndicationChange}
-                placeholder="Ex.: João Silva"
-              />
-            </label>
-
-            <label>
-              Seu WhatsApp
-              <input
-                required
-                type="tel"
-                name="whatsappIndicante"
-                value={indicationForm.whatsappIndicante}
-                onChange={handleIndicationChange}
-                placeholder="(82) 99999-9999"
-              />
-            </label>
-
-            <label>
-              Nome do indicado
-              <input
-                required
-                type="text"
-                name="nomeIndicado"
-                value={indicationForm.nomeIndicado}
-                onChange={handleIndicationChange}
-                placeholder="Nome da pessoa/empresa"
-              />
-            </label>
-
-            <label>
-              Contato do indicado
-              <input
-                required
-                type="text"
-                name="contatoIndicado"
-                value={indicationForm.contatoIndicado}
-                onChange={handleIndicationChange}
-                placeholder="Telefone, WhatsApp ou e-mail"
-              />
-            </label>
-
-            <label className="full">
-              Observações
-              <textarea
-                name="observacoes"
-                value={indicationForm.observacoes}
-                onChange={handleIndicationChange}
-                rows={4}
-                placeholder="Ex.: Melhor horário para contato ou tipo de serviço procurado"
-              />
-            </label>
-
-            <button className="btn primary" type="submit">Enviar indicação no WhatsApp</button>
-          </form>
         </section>
 
-        {/* CTA final */}
-        <section className="section">
-          <div className="finalCta">
-            <div>
-              <h2>Vamos começar?</h2>
-              <p>
-                Entre em contato diretamente com nossa equipe técnica e receba um orçamento.
-              </p>
-              <div className="meta">
-                <div>
-                  <strong>Responsável Técnico:</strong> Eng. Eletricista Laerte Ramon Santos Oliveira
-                </div>
-                <div>
-                  <strong>CREA:</strong> 0221926780 • <strong>CNPJ:</strong> 37.266.810/0001-02
-                </div>
-              </div>
-            </div>
+        <section className="container values" id="diferenciais">
+          <article><h3>Missão</h3><p>Entregar soluções com alta qualidade, segurança e performance.</p></article>
+          <article><h3>Visão</h3><p>Ser referência em engenharia elétrica e energia solar em Alagoas.</p></article>
+          <article><h3>Valores</h3><p>Confiabilidade, compromisso e foco no resultado do cliente.</p></article>
+        </section>
 
-            <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">
-              Solicitar orçamento
-            </a>
+        <section className="section why">
+          <div className="whyLeft">
+            <h2>Por que a LR Soluções Elétricas é a escolha certa para seu projeto?</h2>
+            <ul>
+              {reasons.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
           </div>
+          <img
+            src="https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=1200&q=80"
+            alt="Parceria fechada"
+          />
+        </section>
+
+        <section id="contato" className="container finalCta">
+          <h2>Pronto para transformar a energia do seu negócio?</h2>
+          <p>E-mail: engenharialrsolar@gmail.com • Suporte: (82) 99939-0130</p>
+          <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">Fale conosco agora via WhatsApp</a>
         </section>
       </main>
 
-      {/* Floating WhatsApp */}
-      <a className="fab" href={whatsapp} target="_blank" rel="noreferrer" aria-label="WhatsApp">
-        WhatsApp
-      </a>
-
       <footer className="footer">
         <div className="container footerInner">
-          <span>© {new Date().getFullYear()} LR Soluções Elétricas — Todos os direitos reservados.</span>
+          <img src="/logo.png" alt="LR" />
+          <div>
+            <h4>Contato</h4>
+            <p>engenharialrsolar@gmail.com</p>
+            <p>(82) 9 9939-0130</p>
+          </div>
         </div>
       </footer>
     </div>
@@ -327,373 +154,33 @@ export default function App() {
 }
 
 const css = `
-:root{
-  --brand:#F28C28;
-  --brandDark:#C85A14;
-  --accent:#FFD200;
-
-  --bg:#0b0b0c;
-  --panel:#111114;
-  --card:#141419;
-  --text:#ffffff;
-  --muted:rgba(255,255,255,.78);
-  --line:rgba(255,255,255,.12);
-  --shadow: 0 18px 50px rgba(0,0,0,.35);
-}
-
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
-  background:
-    radial-gradient(900px 520px at 12% 12%, rgba(242,140,40,.35), transparent 62%),
-    radial-gradient(800px 520px at 88% 18%, rgba(255,210,0,.22), transparent 60%),
-    linear-gradient(180deg, #09090a, #101012);
-  color:var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-}
-a{color:inherit;text-decoration:none}
-.page{min-height:100vh}
-
-.container{max-width:1120px;margin:0 auto;padding:0 20px}
-
-/* Topbar */
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:40;
-  backdrop-filter: blur(10px);
-  background: rgba(10,10,12,.55);
-  border-bottom:1px solid var(--line);
-}
-.topbarInner{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px 0;
-  gap:14px;
-}
-.brand{display:flex; align-items:center}
-.brandLogo{
-  height:48px;
-  width:auto;
-  border-radius:14px;
-  box-shadow: 0 10px 24px rgba(0,0,0,.35);
-  border: 1px solid rgba(255,255,255,.10);
-}
-.nav{display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:flex-end}
-.nav a{color:var(--muted); font-weight:700; font-size:14px}
-.nav a:hover{color:var(--text)}
-.navBtn{
-  padding:10px 12px;
-  border-radius:12px;
-  font-weight:900;
-  color:#1b120a !important;
-  background: linear-gradient(135deg, var(--brand), var(--brandDark));
-  border: 1px solid rgba(0,0,0,.08);
-}
-
-/* Hero */
-.hero{padding:46px 0 10px}
-.heroGrid{
-  display:grid;
-  grid-template-columns: 1.12fr .88fr;
-  gap:18px;
-  align-items:stretch;
-}
-.heroLeft{padding-top:6px}
-
-.pill{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:8px 12px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.03);
-  color:var(--muted);
-  font-size:13px;
-  font-weight:800;
-}
-.pillDot{
-  width:10px;height:10px;border-radius:999px;
-  background: linear-gradient(135deg, var(--accent), var(--brand));
-  box-shadow: 0 0 0 3px rgba(255,210,0,.12);
-}
-
-h1{
-  margin:14px 0 12px;
-  font-size:54px;
-  line-height:1.03;
-  letter-spacing:-.02em;
-}
-.h1Accent{color: rgba(255,255,255,.88)}
-
-.subtitle{
-  margin:0 0 18px;
-  color:var(--muted);
-  font-size:18px;
-  line-height:1.6;
-  max-width:64ch;
-}
-
-.ctaRow{display:flex; gap:12px; flex-wrap:wrap; margin: 10px 0 16px}
-.btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:12px 16px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.03);
-  font-weight:1000;
-  transition: transform .12s ease, background .12s ease, border-color .12s ease, filter .12s ease;
-}
-.btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18)}
-.btn.primary{
-  color:#1b120a;
-  background: linear-gradient(135deg, var(--brand), var(--brandDark));
-  border-color: transparent;
-  box-shadow: 0 14px 34px rgba(242,140,40,.18);
-}
-.btn.primary:hover{filter: brightness(1.05)}
-.btn.ghost{background:transparent}
-.btn.small{padding:10px 14px; border-radius:12px; font-size:14px}
-
-.chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
-.chips span{
-  font-size:13px;
-  color: rgba(255,255,255,.82);
-  padding:8px 10px;
-  border-radius:999px;
-  background: rgba(255,255,255,.03);
-  border: 1px dashed rgba(255,255,255,.18);
-}
-
-/* Right panel */
-.heroRight{
-  background: rgba(255,255,255,.03);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  box-shadow: var(--shadow);
-  padding: 18px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.panelTitle{font-weight:1000; font-size:16px}
-.panelText{color:var(--muted); font-size:14px; line-height:1.5}
-
-.stats{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:10px;
-}
-.stat{
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 16px;
-  padding: 12px;
-}
-.statValue{font-size:22px; font-weight:1100; letter-spacing:-.01em}
-.statLabel{margin-top:4px; font-size:12px; color:var(--muted)}
-
-.panelCta{
-  margin-top:auto;
-  padding-top:12px;
-  border-top:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-.panelCtaText{color:var(--muted); font-size:13px; line-height:1.3}
-.panelCtaText span{display:block; color:var(--text); font-weight:1000; margin-top:4px}
-
-/* Sections */
-.section{padding:44px 0}
-.sectionHead h2{margin:0 0 8px; font-size:34px; letter-spacing:-.01em}
-.sectionHead p{margin:0; color:var(--muted); line-height:1.6; max-width:76ch}
-
-.cards{
-  margin-top:18px;
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:14px;
-}
-.card{
-  background: linear-gradient(135deg, rgba(242,140,40,.08), rgba(255,210,0,.06));
-  border: 1px solid rgba(242,140,40,.22);
-  border-radius: 20px;
-  padding: 18px;
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-}
-.card:hover{
-  transform: translateY(-3px);
-  border-color: rgba(255,210,0,.42);
-  box-shadow: 0 0 18px rgba(242,140,40,.18);
-}
-.cardTop{display:flex; align-items:center; gap:10px; margin-bottom:8px}
-.icon{
-  width:34px; height:34px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius: 14px;
-  background: rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.10);
-}
-.card h3{margin:0; font-size:18px; font-weight:1000}
-.card p{margin:0; color:var(--muted); line-height:1.55; font-size:14px}
-
-/* Band */
-.ctaBand{
-  display:grid;
-  grid-template-columns: 1.25fr .75fr;
-  gap:14px;
-  align-items:stretch;
-}
-.ctaBandText{
-  background: rgba(255,255,255,.03);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 20px;
-}
-.ctaBandText h2{margin:0 0 10px; font-size:28px}
-.ctaBandText ul{margin:0; padding-left:18px; color:var(--muted); line-height:1.8}
-.ctaBandBox{
-  background: linear-gradient(135deg, rgba(242,140,40,.18), rgba(255,210,0,.10));
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 22px;
-  padding: 20px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  justify-content:space-between;
-}
-.ctaBandBoxTitle{font-weight:1100; font-size:16px}
-.ctaBandBoxText{color:var(--muted); line-height:1.5}
-
-/* Widget */
-.widgetWrap{
-  margin-top:14px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 14px;
-}
-
-/* Indicação */
-.indicationForm{
-  margin-top: 18px;
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:12px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 18px;
-}
-.indicationForm label{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  font-weight:700;
-  color:rgba(255,255,255,.92);
-  font-size:14px;
-}
-.indicationForm input,
-.indicationForm textarea{
-  width:100%;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.26);
-  color:var(--text);
-  padding:11px 12px;
-  font-size:14px;
-  outline:none;
-}
-.indicationForm input:focus,
-.indicationForm textarea:focus{
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255,210,0,.18);
-}
-.indicationForm .full{
-  grid-column: 1 / -1;
-}
-.indicationForm button{
-  justify-self: start;
-}
-
-/* Final CTA */
-.finalCta{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:16px;
-  flex-wrap:wrap;
-  padding: 22px;
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: linear-gradient(135deg, rgba(242,140,40,.18), rgba(255,210,0,.10));
-}
-.finalCta h2{margin:0 0 6px}
-.finalCta p{margin:0 0 12px; color:var(--muted); line-height:1.6}
-.meta{color: rgba(255,255,255,.88); font-size:13px; display:flex; flex-direction:column; gap:6px}
-
-/* Floating Whats */
-.fab{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:50;
-  padding:12px 14px;
-  border-radius:999px;
-  background: linear-gradient(135deg, var(--brand), var(--brandDark));
-  color:#1b120a;
-  font-weight:1100;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(0,0,0,.10);
-}
-.fab:hover{transform: translateY(-1px)}
-
-/* Footer */
-.footer{
-  border-top:1px solid var(--line);
-  padding:18px 0;
-  color:var(--muted);
-  font-size:13px;
-}
-.footerInner{display:flex; justify-content:center; text-align:center}
-
-
-
-.skipLink{
-  position:absolute;
-  left:-9999px;
-  top:auto;
-}
-.skipLink:focus{
-  left:20px;
-  top:12px;
-  z-index:90;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid var(--line);
-  background:#111114;
-}
-
-a:focus-visible,
-.btn:focus-visible{
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-/* Responsive */
-@media (max-width: 980px){
-  h1{font-size:40px}
-  .heroGrid{grid-template-columns:1fr}
-  .cards{grid-template-columns:1fr}
-  .ctaBand{grid-template-columns:1fr}
-  .nav{gap:10px}
-  .indicationForm{grid-template-columns:1fr}
-}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#101216;color:#fff}
+a{text-decoration:none;color:inherit}
+.container{max-width:1150px;margin:0 auto;padding:0 18px}
+.topbar{background:#f3651e;position:sticky;top:0;z-index:30}
+.topbarInner{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:14px}
+.logo{height:44px;background:#fff;border-radius:999px;padding:2px 8px}
+.menu{display:flex;gap:18px;font-size:14px;font-weight:600}
+.topCta{background:#fff;color:#f3651e;padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px}
+.hero{position:relative;min-height:560px;background:url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat}
+.overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(16,18,22,.92),rgba(16,18,22,.55) 55%,rgba(16,18,22,.3))}
+.heroContent{position:relative;padding:90px 18px;max-width:700px}
+.tag,.sectionTag{display:inline-block;background:#f3651e;color:#fff;padding:4px 10px;font-size:11px;font-weight:800;letter-spacing:.06em}
+h1{font-size:62px;line-height:1.02;margin:18px 0 14px}
+.hero p{color:#efefef;max-width:58ch}
+.heroBtns{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.btn{padding:12px 16px;border-radius:7px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+.btn.primary{background:#f3651e;color:#fff}.btn.light{background:#fff;color:#111}
+.contactStrip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:-36px;position:relative;z-index:2}
+.contactStrip article{background:#f3651e;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:6px}.contactStrip span{font-size:13px}
+.contactStrip article:nth-child(2){background:#15171c}
+.lightSection{background:#efefef;color:#111;padding:60px 0}
+.section{padding:34px 0}.sectionHead{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}.section h2{font-size:44px;max-width:760px;margin:14px 0}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:#f3651e;border-radius:10px;overflow:hidden;color:#fff}.card img{width:100%;height:150px;object-fit:cover}.cardBody{padding:14px}.card h3{margin:0 0 8px;font-size:24px}.card p{font-size:13px;line-height:1.5}.card a{display:inline-block;margin-top:8px;background:#fff;color:#f3651e;padding:8px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}.split img{width:100%;border-radius:10px}.split p{line-height:1.6;color:#333}
+.values{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:22px 18px 50px}.values article{background:#f3651e;color:#fff;border-radius:10px;padding:20px;text-align:center}.values h3{margin:0 0 8px;font-size:30px}.values p{margin:0;font-size:13px}
+.why{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;padding:0}.whyLeft{background:#22252c;color:#fff;padding:40px 22px}.whyLeft h2{font-size:44px;margin:0 0 14px}.whyLeft ul{margin:0;padding-left:18px;display:grid;gap:10px;line-height:1.5}.why img{width:100%;height:100%;object-fit:cover;min-height:460px}
+.finalCta{text-align:center;padding:60px 18px 70px}.finalCta h2{font-size:48px;margin:0 0 8px}.finalCta p{color:#444;margin-bottom:20px}
+.footer{background:#101216;color:#fff;padding:36px 0}.footerInner{display:flex;justify-content:space-between;gap:20px;align-items:center}.footer img{height:72px;background:#f3651e;padding:6px;border-radius:8px}
+@media (max-width:1000px){h1{font-size:44px}.cards{grid-template-columns:1fr 1fr}.split,.why,.contactStrip,.values{grid-template-columns:1fr}.menu{display:none}}
 `;
