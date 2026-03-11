@@ -96,7 +96,6 @@ export default function App() {
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
             <a href="#indicacao">Indicação</a>
-            <a href="#atendimento">Atendimento por voz</a>
             <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
               Orçamento no WhatsApp
             </a>
@@ -212,22 +211,6 @@ export default function App() {
                 Chamar no WhatsApp
               </a>
             </div>
-          </div>
-        </section>
-
-        {/* Widget */}
-        <section id="atendimento" className="section">
-          <div className="sectionHead">
-            <h2>Atendimento por voz</h2>
-            <p>Se preferir, fale com nosso agente de voz para iniciar o atendimento.</p>
-          </div>
-
-          <div className="widgetWrap">
-            <voiceai-widget
-              id="V2ViV2lkZ2V0VHlwZTpZd2RYNnc3"
-              host="callx.aceleradoramx3.com"
-              aria-label="Widget de atendimento por voz da LR Soluções Elétricas"
-            ></voiceai-widget>
           </div>
         </section>
 
