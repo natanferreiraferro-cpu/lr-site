@@ -1,5 +1,14 @@
+import { useState } from "react";
+
 export default function App() {
   const whatsapp = "https://wa.me/558299390131";
+  const [indicationForm, setIndicationForm] = useState({
+    nomeIndicante: "",
+    whatsappIndicante: "",
+    nomeIndicado: "",
+    contatoIndicado: "",
+    observacoes: "",
+  });
 
   const stats = [
     { value: "+3.200", label: "Clientes atendidos" },
@@ -49,6 +58,27 @@ export default function App() {
     },
   ];
 
+  const handleIndicationChange = (event) => {
+    const { name, value } = event.target;
+    setIndicationForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleIndicationSubmit = (event) => {
+    event.preventDefault();
+
+    const message = [
+      "Olá! Quero fazer uma indicação para a LR Soluções Elétricas:",
+      `Nome de quem indica: ${indicationForm.nomeIndicante}`,
+      `WhatsApp de quem indica: ${indicationForm.whatsappIndicante}`,
+      `Nome do indicado: ${indicationForm.nomeIndicado}`,
+      `Contato do indicado: ${indicationForm.contatoIndicado}`,
+      `Observações: ${indicationForm.observacoes || "Sem observações."}`,
+    ].join("\n");
+
+    const whatsappUrl = `${whatsapp}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="page">
       <style>{css}</style>
@@ -65,6 +95,7 @@ export default function App() {
           <nav className="nav" aria-label="Navegação principal">
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
+            <a href="#indicacao">Indicação</a>
             <a href="#atendimento">Atendimento por voz</a>
             <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
               Orçamento no WhatsApp
@@ -198,6 +229,79 @@ export default function App() {
               aria-label="Widget de atendimento por voz da LR Soluções Elétricas"
             ></voiceai-widget>
           </div>
+        </section>
+
+        <section id="indicacao" className="section">
+          <div className="sectionHead">
+            <h2>Formulário de Indicação</h2>
+            <p>
+              Indique um cliente e nossa equipe entra em contato. Ao enviar, abrimos o WhatsApp com
+              sua mensagem preenchida automaticamente.
+            </p>
+          </div>
+
+          <form className="indicationForm" onSubmit={handleIndicationSubmit}>
+            <label>
+              Seu nome
+              <input
+                required
+                type="text"
+                name="nomeIndicante"
+                value={indicationForm.nomeIndicante}
+                onChange={handleIndicationChange}
+                placeholder="Ex.: João Silva"
+              />
+            </label>
+
+            <label>
+              Seu WhatsApp
+              <input
+                required
+                type="tel"
+                name="whatsappIndicante"
+                value={indicationForm.whatsappIndicante}
+                onChange={handleIndicationChange}
+                placeholder="(82) 99999-9999"
+              />
+            </label>
+
+            <label>
+              Nome do indicado
+              <input
+                required
+                type="text"
+                name="nomeIndicado"
+                value={indicationForm.nomeIndicado}
+                onChange={handleIndicationChange}
+                placeholder="Nome da pessoa/empresa"
+              />
+            </label>
+
+            <label>
+              Contato do indicado
+              <input
+                required
+                type="text"
+                name="contatoIndicado"
+                value={indicationForm.contatoIndicado}
+                onChange={handleIndicationChange}
+                placeholder="Telefone, WhatsApp ou e-mail"
+              />
+            </label>
+
+            <label className="full">
+              Observações
+              <textarea
+                name="observacoes"
+                value={indicationForm.observacoes}
+                onChange={handleIndicationChange}
+                rows={4}
+                placeholder="Ex.: Melhor horário para contato ou tipo de serviço procurado"
+              />
+            </label>
+
+            <button className="btn primary" type="submit">Enviar indicação no WhatsApp</button>
+          </form>
         </section>
 
         {/* CTA final */}
@@ -494,6 +598,48 @@ h1{
   padding: 14px;
 }
 
+/* Indicação */
+.indicationForm{
+  margin-top: 18px;
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:12px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 18px;
+}
+.indicationForm label{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  font-weight:700;
+  color:rgba(255,255,255,.92);
+  font-size:14px;
+}
+.indicationForm input,
+.indicationForm textarea{
+  width:100%;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.26);
+  color:var(--text);
+  padding:11px 12px;
+  font-size:14px;
+  outline:none;
+}
+.indicationForm input:focus,
+.indicationForm textarea:focus{
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,210,0,.18);
+}
+.indicationForm .full{
+  grid-column: 1 / -1;
+}
+.indicationForm button{
+  justify-self: start;
+}
+
 /* Final CTA */
 .finalCta{
   display:flex;
@@ -565,5 +711,6 @@ a:focus-visible,
   .cards{grid-template-columns:1fr}
   .ctaBand{grid-template-columns:1fr}
   .nav{gap:10px}
+  .indicationForm{grid-template-columns:1fr}
 }
 `;
