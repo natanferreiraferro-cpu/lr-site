@@ -286,6 +286,7 @@ export default function App() {
             <p>(82) 9939-0131</p>
           </div>
         </div>
+        <div className="footerBy">by Natan Ferro</div>
       </footer>
     </div>
   );
@@ -342,7 +343,7 @@ h1{font-size:62px;line-height:1.02;margin:18px 0 14px}
 .fullWidth{grid-column:1/-1}
 .referralForm .btn{justify-self:start}
 .finalCta{text-align:center;padding:60px 18px 70px}.finalCta h2{font-size:48px;margin:0 0 8px}.finalCta p{color:#444;margin-bottom:20px}
-.footer{background:#101216;color:#fff;padding:36px 0}.footerInner{display:flex;justify-content:space-between;gap:20px;align-items:center}.footer img{height:72px;background:#f3651e;padding:6px;border-radius:8px;transition:transform .3s ease}.footer img:hover{transform:rotate(-2deg) scale(1.03)}
+.footer{background:#101216;color:#fff;padding:36px 0}.footerInner{display:flex;justify-content:space-between;gap:20px;align-items:center}.footer img{height:72px;background:#f3651e;padding:6px;border-radius:8px;transition:transform .3s ease}.footer img:hover{transform:rotate(-2deg) scale(1.03)}.footerBy{text-align:center;margin-top:18px;font-size:13px;color:rgba(255,255,255,.78)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes zoomHero{from{background-size:100%}to{background-size:106%}}
 @media (max-width:1000px){h1{font-size:44px}.cards{grid-template-columns:1fr 1fr}.split,.why,.contactStrip,.values,.referralForm{grid-template-columns:1fr}.menu{display:none}.section h2{font-size:34px}.finalCta h2{font-size:38px}}
