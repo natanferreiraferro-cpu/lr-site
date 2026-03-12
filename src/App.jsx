@@ -136,7 +136,7 @@ export default function App() {
       </section>
 
       <section className="contactStrip container">
-        <article><strong>Atendimento</strong><span>WhatsApp: 82 99939-0130</span></article>
+        <article><strong>Atendimento</strong><span>WhatsApp: 82 9939-0131</span></article>
         <article><strong>E-mail</strong><span>engenharialrsolar@gmail.com</span></article>
         <article><strong>Localização</strong><span>AL-110, Arapiraca - AL</span></article>
       </section>
@@ -272,7 +272,7 @@ export default function App() {
 
         <section id="contato" className="container finalCta">
           <h2>Pronto para transformar a energia do seu negócio?</h2>
-          <p>E-mail: engenharialrsolar@gmail.com • Suporte: (82) 99939-0130</p>
+          <p>E-mail: engenharialrsolar@gmail.com • Suporte: (82) 9939-0131</p>
           <a className="btn primary" href={whatsapp} target="_blank" rel="noreferrer">Fale conosco agora via WhatsApp</a>
         </section>
       </main>
@@ -283,7 +283,7 @@ export default function App() {
           <div>
             <h4>Contato</h4>
             <p>engenharialrsolar@gmail.com</p>
-            <p>(82) 9 9939-0130</p>
+            <p>(82) 9939-0131</p>
           </div>
         </div>
       </footer>
