@@ -3,19 +3,72 @@ import { useState } from "react";
 const INDICATOR_CODES_KEY = "lr_indicator_codes_v1";
 
 const normalizeIndicatorName = (name) => name.trim().toLowerCase().replace(/\s+/g, " ");
-
+const normalizeIndicatorCode = (code) => code.trim().toUpperCase();
 const createIndicatorCode = () => `LR-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
-const getStoredCodes = () => {
+const createEmptyRegistry = () => ({ byName: {}, byCode: {} });
+
+const getStoredRegistry = () => {
   try {
-    return JSON.parse(localStorage.getItem(INDICATOR_CODES_KEY) || "{}");
+    const parsed = JSON.parse(localStorage.getItem(INDICATOR_CODES_KEY) || "{}");
+
+    if (parsed.byName && parsed.byCode) {
+      return parsed;
+    }
+
+    const migrated = createEmptyRegistry();
+    Object.entries(parsed).forEach(([name, code]) => {
+      const normalizedName = normalizeIndicatorName(name);
+      const normalizedCode = normalizeIndicatorCode(String(code));
+
+      if (normalizedName && normalizedCode) {
+        migrated.byName[normalizedName] = { name, code: normalizedCode };
+        migrated.byCode[normalizedCode] = { name, code: normalizedCode };
+      }
+    });
+
+    return migrated;
   } catch {
-    return {};
+    return createEmptyRegistry();
   }
 };
 
-const saveStoredCodes = (codes) => {
-  localStorage.setItem(INDICATOR_CODES_KEY, JSON.stringify(codes));
+const saveStoredRegistry = (registry) => {
+  localStorage.setItem(INDICATOR_CODES_KEY, JSON.stringify(registry));
+};
+
+const getOrCreateIndicator = (rawName) => {
+  const name = rawName.trim();
+  const normalizedName = normalizeIndicatorName(name);
+
+  if (!normalizedName) {
+    return { name: "", code: "" };
+  }
+
+  const registry = getStoredRegistry();
+  if (!registry.byName[normalizedName]) {
+    let code = createIndicatorCode();
+    while (registry.byCode[code]) {
+      code = createIndicatorCode();
+    }
+
+    const indicator = { name, code };
+    registry.byName[normalizedName] = indicator;
+    registry.byCode[code] = indicator;
+    saveStoredRegistry(registry);
+  }
+
+  return registry.byName[normalizedName];
+};
+
+const getIndicatorByCode = (rawCode) => {
+  const normalizedCode = normalizeIndicatorCode(rawCode);
+  if (!normalizedCode) {
+    return null;
+  }
+
+  const registry = getStoredRegistry();
+  return registry.byCode[normalizedCode] || null;
 };
 
 export default function App() {
@@ -28,23 +81,48 @@ export default function App() {
     gastoMensal: "",
   });
 
+  const syncIndicatorFields = ({ name, code }) => {
+    setIndicatorName(name || "");
+    setIndicatorCode(code || "");
+  };
+
   const handleIndicatorNameChange = (event) => {
     const value = event.target.value;
     setIndicatorName(value);
 
-    const normalized = normalizeIndicatorName(value);
-    if (!normalized) {
+    if (!normalizeIndicatorName(value)) {
       setIndicatorCode("");
       return;
     }
 
-    const codes = getStoredCodes();
-    if (!codes[normalized]) {
-      codes[normalized] = createIndicatorCode();
-      saveStoredCodes(codes);
+    const indicator = getOrCreateIndicator(value);
+    setIndicatorCode(indicator.code);
+  };
+
+  const handleIndicatorCodeChange = (event) => {
+    const value = normalizeIndicatorCode(event.target.value);
+    setIndicatorCode(value);
+
+    if (!value) {
+      setIndicatorName("");
+      return;
     }
 
-    setIndicatorCode(codes[normalized]);
+    const indicator = getIndicatorByCode(value);
+    if (indicator) {
+      syncIndicatorFields(indicator);
+    }
+  };
+
+  const handleIndicatorCodeBlur = () => {
+    if (!indicatorCode) {
+      return;
+    }
+
+    const indicator = getIndicatorByCode(indicatorCode);
+    if (indicator) {
+      syncIndicatorFields(indicator);
+    }
   };
 
   const handleReferralChange = (event) => {
@@ -203,6 +281,10 @@ export default function App() {
         <section id="indicacao" className="container section referralSection">
           <span className="sectionTag">FORMULÁRIO DE INDICAÇÃO</span>
           <h2>Programa de Indicação Premiada: indique e ganhe benefícios exclusivos.</h2>
+          <p className="referralIntro">
+            O nome do indicador fica vinculado ao mesmo código fixo. Você também pode preencher o
+            código e recuperar automaticamente o nome do indicador.
+          </p>
 
           <form className="referralForm" onSubmit={handleReferralSubmit}>
             <div className="fieldGroup">
@@ -218,12 +300,15 @@ export default function App() {
             </div>
 
             <div className="fieldGroup">
-              <label htmlFor="indicatorCode">Código do indicador (gerado automaticamente)</label>
+              <label htmlFor="indicatorCode">Código do indicador</label>
               <input
                 id="indicatorCode"
+                required
                 type="text"
-                value={indicatorCode || "Preencha o nome para gerar"}
-                readOnly
+                placeholder="Digite ou gere o código"
+                value={indicatorCode}
+                onChange={handleIndicatorCodeChange}
+                onBlur={handleIndicatorCodeBlur}
               />
             </div>
 
@@ -334,7 +419,7 @@ h1{font-size:62px;line-height:1.02;margin:18px 0 14px}
 .split p{line-height:1.6;color:#333}
 .values{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:22px 18px 50px}.values article{background:#f3651e;color:#fff;border-radius:10px;padding:20px;text-align:center;transition:transform .24s ease}.values article:hover{transform:translateY(-5px)}.values h3{margin:0 0 8px;font-size:30px}.values p{margin:0;font-size:13px}
 .why{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;padding:0}.whyLeft{background:#22252c;color:#fff;padding:40px 22px}.whyLeft h2{font-size:44px;margin:0 0 14px}.whyLeft ul{margin:0;padding-left:18px;display:grid;gap:10px;line-height:1.5}.why img{width:100%;height:100%;object-fit:cover;min-height:460px;transition:transform .45s ease}.why img:hover{transform:scale(1.03)}
-.referralSection h2{font-size:38px;max-width:860px}
+.referralSection h2{font-size:38px;max-width:860px}.referralIntro{color:#444;max-width:760px;line-height:1.6;margin-top:0}
 .referralForm{margin-top:14px;background:#fff;border-radius:14px;padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;box-shadow:0 16px 26px rgba(0,0,0,.12)}
 .fieldGroup{display:flex;flex-direction:column;gap:6px}
 .fieldGroup label{font-size:13px;font-weight:700;color:#222}
