@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react";
 
 const LEADS_STORAGE_KEY = "lr_indicator_leads_v1";
+const PORTAL_AUTH_KEY = "lr_indicator_portal_auth_v1";
+
+const PORTAL_USER = "Master";
+const PORTAL_PASS = "Soprano@7510";
 
 const STATUS_LABEL = {
   em_andamento: "Em andamento",
@@ -20,9 +24,36 @@ const saveLeads = (leads) => {
   localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
 };
 
+const hasPortalSession = () => sessionStorage.getItem(PORTAL_AUTH_KEY) === "authenticated";
+
 export default function PortalApp() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => hasPortalSession());
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+
   const [leads, setLeads] = useState(() => readLeads());
   const [query, setQuery] = useState("");
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    if (username === PORTAL_USER && password === PORTAL_PASS) {
+      sessionStorage.setItem(PORTAL_AUTH_KEY, "authenticated");
+      setIsAuthenticated(true);
+      setAuthError("");
+      return;
+    }
+
+    setAuthError("Usuário ou senha inválidos.");
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem(PORTAL_AUTH_KEY);
+    setIsAuthenticated(false);
+    setUsername("");
+    setPassword("");
+  };
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -90,6 +121,46 @@ export default function PortalApp() {
     }));
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="portalLoginPage">
+        <style>{css}</style>
+
+        <form className="loginCard" onSubmit={handleLogin}>
+          <img src="/logo.png" alt="LR" />
+          <h1>Portal de Indicadores</h1>
+          <p>Faça login para acessar o acompanhamento das indicações.</p>
+
+          <label>
+            Usuário
+            <input
+              required
+              type="text"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              placeholder="Digite o usuário"
+            />
+          </label>
+
+          <label>
+            Senha
+            <input
+              required
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Digite a senha"
+            />
+          </label>
+
+          {authError && <span className="authError">{authError}</span>}
+
+          <button type="submit">Entrar no portal</button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="portal">
       <style>{css}</style>
@@ -100,6 +171,7 @@ export default function PortalApp() {
           <h1>Portal de Acompanhamento dos Indicadores</h1>
           <p>Acompanhe leads, atualize status (ganho/perdido) e visualize o andamento.</p>
         </div>
+        <button className="logoutBtn" type="button" onClick={handleLogout}>Sair</button>
       </header>
 
       <section className="summary">
@@ -188,9 +260,18 @@ function LeadCard({ lead, onStatusChange, onNoteSave }) {
 const css = `
 *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f4f4f4;color:#161616}
 .portal{max-width:1100px;margin:0 auto;padding:20px}
+.portalLoginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#101216,#2a2d34);padding:20px}
+.loginCard{width:min(430px,100%);background:#fff;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.loginCard img{height:62px;align-self:flex-start;background:#f3651e;border-radius:8px;padding:4px}
+.loginCard h1{margin:0;font-size:28px}.loginCard p{margin:0;color:#666;line-height:1.5}
+.loginCard label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:14px}
+.loginCard input{height:42px;border:1px solid #ccc;border-radius:8px;padding:0 10px}
+.loginCard button{height:42px;border:none;border-radius:8px;background:#f3651e;color:#fff;font-weight:700;cursor:pointer}
+.authError{color:#b91c1c;font-size:13px;font-weight:700}
 .portalHeader{display:flex;gap:14px;align-items:center;background:#111;color:#fff;padding:16px;border-radius:12px}
 .portalHeader img{height:56px;background:#f3651e;border-radius:8px;padding:4px}
 .portalHeader h1{margin:0 0 4px;font-size:26px}.portalHeader p{margin:0;color:#ddd}
+.logoutBtn{margin-left:auto;height:38px;border:none;border-radius:8px;background:#f3651e;color:#fff;padding:0 14px;font-weight:700;cursor:pointer}
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
 .summary article{background:#fff;border-radius:10px;padding:14px;text-align:center;border:1px solid #ececec}
 .summary strong{display:block;font-size:28px;color:#f3651e}
@@ -207,5 +288,5 @@ const css = `
 .timeline{display:grid;gap:8px}.timeline div{background:#f8f8f8;border-left:3px solid #f3651e;padding:8px 10px;border-radius:6px}
 .timeline span{font-size:12px;color:#666}.timeline p{margin:2px 0 0}
 .empty{padding:16px;text-align:center;background:#fff;border-radius:10px}
-@media (max-width:900px){.summary{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.noteRow{flex-direction:column}}
+@media (max-width:900px){.summary{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.noteRow{flex-direction:column}.portalHeader{flex-wrap:wrap}.logoutBtn{margin-left:0}}
 `;
