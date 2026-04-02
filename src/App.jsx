@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const INDICATOR_CODES_KEY = "lr_indicator_codes_v1";
+const LEADS_STORAGE_KEY = "lr_indicator_leads_v1";
 
 const normalizeIndicatorName = (name) => name.trim().toLowerCase().replace(/\s+/g, " ");
 const normalizeIndicatorCode = (code) => code.trim().toUpperCase();
@@ -35,6 +36,18 @@ const getStoredRegistry = () => {
 
 const saveStoredRegistry = (registry) => {
   localStorage.setItem(INDICATOR_CODES_KEY, JSON.stringify(registry));
+};
+
+const getStoredLeads = () => {
+  try {
+    return JSON.parse(localStorage.getItem(LEADS_STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const saveStoredLeads = (leads) => {
+  localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
 };
 
 const getOrCreateIndicator = (rawName) => {
@@ -133,6 +146,27 @@ export default function App() {
   const handleReferralSubmit = (event) => {
     event.preventDefault();
 
+    const lead = {
+      id: `lead-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      indicatorName,
+      indicatorCode,
+      indicadoNome: referral.indicadoNome,
+      indicadoTelefone: referral.indicadoTelefone,
+      gastoMensal: referral.gastoMensal,
+      status: "em_andamento",
+      history: [
+        {
+          at: new Date().toISOString(),
+          status: "em_andamento",
+          note: "Lead criado no formulário de indicação",
+        },
+      ],
+    };
+
+    const leads = getStoredLeads();
+    saveStoredLeads([lead, ...leads]);
+
     const message = [
       "Olá! Nova indicação recebida:",
       `Indicador: ${indicatorName}`,
@@ -191,6 +225,7 @@ export default function App() {
             <a href="#diferenciais">Diferenciais</a>
             <a href="#indicacao">Indicação</a>
             <a href="#contato">Contato</a>
+            <a href="/portal.html" target="_blank" rel="noreferrer">Portal Indicadores</a>
           </nav>
 
           <a className="topCta" href={whatsapp} target="_blank" rel="noreferrer">Fale conosco</a>
