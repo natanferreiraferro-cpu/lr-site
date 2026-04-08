@@ -1,5 +1,8 @@
+import { useMemo, useState } from "react";
+
 export default function App() {
   const whatsapp = "https://wa.me/558299390131";
+  const [filtroAndamento, setFiltroAndamento] = useState("Todos");
 
   const stats = [
     { value: "+3.200", label: "Clientes atendidos" },
@@ -48,6 +51,24 @@ export default function App() {
       icon: "🔌",
     },
   ];
+
+  const indicadores = [
+    { processo: "PROC-2026-001", cliente: "Condomínio Solar Mar", andamento: "Em análise", prazo: "15/04/2026" },
+    { processo: "PROC-2026-014", cliente: "Indústria Atlântica", andamento: "Em execução", prazo: "22/04/2026" },
+    { processo: "PROC-2026-027", cliente: "Comercial Via Norte", andamento: "Concluído", prazo: "02/04/2026" },
+    { processo: "PROC-2026-033", cliente: "Residencial Aurora", andamento: "Em execução", prazo: "18/04/2026" },
+    { processo: "PROC-2026-041", cliente: "Hospital Santa Luz", andamento: "Em análise", prazo: "28/04/2026" },
+  ];
+
+  const opcoesAndamento = ["Todos", ...new Set(indicadores.map((item) => item.andamento))];
+
+  const indicadoresFiltrados = useMemo(() => {
+    if (filtroAndamento === "Todos") {
+      return indicadores;
+    }
+
+    return indicadores.filter((item) => item.andamento === filtroAndamento);
+  }, [filtroAndamento]);
 
   return (
     <div className="page">
@@ -186,6 +207,53 @@ export default function App() {
 
         {/* Widget */}
         <section id="atendimento" className="section">
+          <div className="sectionHead">
+            <h2>Portal de Indicadores</h2>
+            <p>
+              Tabela limpa e objetiva para acompanhamento dos processos com filtro por andamento.
+            </p>
+          </div>
+
+          <div className="indicadoresWrap">
+            <div className="filtroRow">
+              <label htmlFor="filtroAndamento">Andamento do processo</label>
+              <select
+                id="filtroAndamento"
+                value={filtroAndamento}
+                onChange={(event) => setFiltroAndamento(event.target.value)}
+              >
+                {opcoesAndamento.map((opcao) => (
+                  <option key={opcao} value={opcao}>
+                    {opcao}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="tableContainer">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Processo</th>
+                    <th>Cliente</th>
+                    <th>Andamento</th>
+                    <th>Prazo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {indicadoresFiltrados.map((item) => (
+                    <tr key={item.processo}>
+                      <td>{item.processo}</td>
+                      <td>{item.cliente}</td>
+                      <td>{item.andamento}</td>
+                      <td>{item.prazo}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <div className="sectionHead">
             <h2>Atendimento por voz</h2>
             <p>Se preferir, fale com nosso agente de voz para iniciar o atendimento.</p>
@@ -492,6 +560,56 @@ h1{
   border: 1px solid var(--line);
   border-radius: 22px;
   padding: 14px;
+}
+
+.indicadoresWrap{
+  margin-top:14px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 14px;
+}
+
+.filtroRow{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+
+.filtroRow label{
+  font-size:14px;
+  color:var(--muted);
+}
+
+.filtroRow select{
+  border: 1px solid rgba(255,255,255,.2);
+  background: #101014;
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.tableContainer{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse: collapse;
+}
+
+th, td{
+  text-align:left;
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  font-size:14px;
+}
+
+th{
+  color:#ffe5b8;
+  font-weight:900;
 }
 
 /* Final CTA */
