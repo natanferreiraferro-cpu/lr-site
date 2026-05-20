@@ -223,6 +223,7 @@ export default function App() {
             <a href="#servicos">Serviços</a>
             <a href="#sobre">Sobre</a>
             <a href="#diferenciais">Diferenciais</a>
+            <a href="#simulador">Simulador</a>
             <a href="#indicacao">Indicação</a>
             <a href="#contato">Contato</a>
             <a href="/portal.html" target="_blank" rel="noreferrer">Portal Indicadores</a>
@@ -310,6 +311,21 @@ export default function App() {
           <img
             src="https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=1200&q=80"
             alt="Parceria fechada"
+          />
+        </section>
+
+        <section id="simulador" className="container section">
+          <span className="sectionTag">SIMULADOR</span>
+          <div className="sectionHead">
+            <h2>Faça sua simulação</h2>
+            <p>Use o simulador abaixo para estimar o potencial do seu projeto.</p>
+          </div>
+          <iframe
+            src="https://azume.com.br/simulador/65b908d172230a001964db33"
+            width="100%"
+            height="600"
+            title="Simulador de Energia"
+            style={{ border: 0, borderRadius: 16 }}
           />
         </section>
 
