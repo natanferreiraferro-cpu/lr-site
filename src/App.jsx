@@ -65,6 +65,7 @@ export default function App() {
           <nav className="nav" aria-label="Navegação principal">
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
+            <a href="#simulacao">Simulação</a>
             <a href="#atendimento">Atendimento por voz</a>
             <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
               Orçamento no WhatsApp
@@ -197,6 +198,21 @@ export default function App() {
               host="callx.aceleradoramx3.com"
               aria-label="Widget de atendimento por voz da LR Soluções Elétricas"
             ></voiceai-widget>
+          </div>
+        </section>
+
+        <section id="simulacao" className="section">
+          <div className="sectionHead">
+            <h2>Simulação</h2>
+            <p>Use o simulador abaixo para estimar seu projeto.</p>
+          </div>
+          <div className="widgetWrap">
+            <iframe
+              src="https://azume.com.br/simulador/65b908d172230a001964db33"
+              width="100%"
+              height="600"
+              title="Simulador"
+            ></iframe>
           </div>
         </section>
 
