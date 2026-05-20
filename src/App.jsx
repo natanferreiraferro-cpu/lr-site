@@ -65,7 +65,13 @@ export default function App() {
           <nav className="nav" aria-label="Navegação principal">
             <a href="#especialidades">Especialidades</a>
             <a href="#numeros">Números</a>
-            <a href="#simulacao">Simulação</a>
+            <a
+              href="https://azume.com.br/simulador/65b908d172230a001964db33"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Simulação
+            </a>
             <a href="#atendimento">Atendimento por voz</a>
             <a className="navBtn" href={whatsapp} target="_blank" rel="noreferrer">
               Orçamento no WhatsApp
@@ -212,6 +218,8 @@ export default function App() {
               width="100%"
               height="600"
               title="Simulador"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
         </section>
