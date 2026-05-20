@@ -1,16 +1,38 @@
-# React + Vite
+# LR Site
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto React + Vite do site da LR Soluções Elétricas.
 
-Currently, two official plugins are available:
+## Ambiente local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+## Build de produção
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm run build
+```
 
-## Expanding the ESLint configuration
+## Deploy no projeto correto da Vercel
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Se as mudanças estiverem indo para um projeto antigo, faça o relink do diretório local para o projeto certo antes de publicar:
+
+```bash
+vercel logout
+vercel login
+vercel link
+```
+
+Durante o `vercel link`, selecione o projeto correspondente ao ambiente atual:
+
+- `lr-site-ndut4rbe6-natanferreiraferro-cpus-projects.vercel.app`
+
+Depois publique:
+
+```bash
+vercel --prod
+```
+
+> Observação: o vínculo de projeto da Vercel fica em `.vercel/project.json` (arquivo local, normalmente não versionado). Se ele apontar para outro projeto, os deploys irão para o lugar errado.
