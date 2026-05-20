@@ -36,3 +36,19 @@ vercel --prod
 ```
 
 > Observação: o vínculo de projeto da Vercel fica em `.vercel/project.json` (arquivo local, normalmente não versionado). Se ele apontar para outro projeto, os deploys irão para o lugar errado.
+
+## Quando ainda publica no projeto antigo (Git Integration)
+
+Se mesmo após `vercel link` a atualização continuar no projeto antigo, o problema normalmente é a integração Git da Vercel:
+
+1. Abra o projeto **site lr** na Vercel.
+2. Vá em **Settings → Git**.
+3. Confirme se o repositório conectado é este repo e se o branch de produção está correto (ex.: `main`).
+4. Em **Ignored Build Step** (se existir), remova qualquer regra que bloqueie seu branch atual.
+5. No projeto antigo, desconecte a integração Git para evitar deploy automático duplicado.
+
+Checklist rápido antes do deploy:
+
+- `vercel whoami`
+- `vercel link` (deve mostrar o projeto `site lr`)
+- `vercel deploy --prod`
