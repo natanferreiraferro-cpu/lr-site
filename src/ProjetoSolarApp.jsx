@@ -1,18 +1,6 @@
 import { useState } from "react";
-
-const LEADS_STORAGE_KEY = "lr_indicator_leads_v1";
-
-const readLeads = () => {
-  try {
-    return JSON.parse(localStorage.getItem(LEADS_STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
-};
-
-const saveLeads = (leads) => {
-  localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
-};
+import { createLead } from "./lib/leadsApi";
+import { isSupabaseConfigured } from "./lib/supabaseClient";
 
 const onlyDigits = (value) => value.replace(/\D/g, "");
 
@@ -60,6 +48,7 @@ export default function ProjetoSolarApp() {
   const [form, setForm] = useState(emptyForm);
   const [acceptedLgpd, setAcceptedLgpd] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -125,7 +114,7 @@ export default function ProjetoSolarApp() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!acceptedLgpd) return;
 
@@ -150,9 +139,19 @@ export default function ProjetoSolarApp() {
       ],
     };
 
-    const leads = readLeads();
-    saveLeads([lead, ...leads]);
-    setSubmitted(true);
+    if (!isSupabaseConfigured) {
+      setSubmitError("Supabase não configurado. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.");
+      return;
+    }
+
+    try {
+      await createLead(lead);
+      setSubmitted(true);
+      setSubmitError("");
+    } catch {
+      setSubmitError("Não foi possível enviar seus dados agora. Tente novamente.");
+      return;
+    }
     setForm(emptyForm);
     setAcceptedLgpd(false);
   };
@@ -167,6 +166,8 @@ export default function ProjetoSolarApp() {
         {submitted && (
           <div className="successMsg">Seus dados estão em análise de aprovação. Boa sorte!</div>
         )}
+
+        {submitError && <div className="empty">{submitError}</div>}
 
         <form onSubmit={handleSubmit}>
           <h2>Dados do cliente</h2>
@@ -223,5 +224,6 @@ button{height:54px;border:none;border-radius:10px;padding:0 22px;font-size:22px;
 button.secondary{background:#fff;border:1px solid #ccc;color:#111}
 button:disabled{opacity:.5;cursor:not-allowed}
 .successMsg{background:#e7f9ec;border:1px solid #96d8aa;color:#176a35;padding:12px;border-radius:10px;margin-bottom:12px;font-weight:700}
+.empty{background:#fff4e5;border:1px solid #f5c073;color:#8a5300;padding:12px;border-radius:10px;margin-bottom:12px;font-weight:600}
 @media (max-width:960px){h1{font-size:34px}h2{font-size:24px}.grid.two,.grid.three{grid-template-columns:1fr}input{font-size:18px;height:48px}form label{font-size:16px}button{font-size:16px;height:48px}}
 `;

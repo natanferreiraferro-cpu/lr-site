@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { fetchLeads, updateLead } from "./lib/leadsApi";
+import { isSupabaseConfigured } from "./lib/supabaseClient";
 
-const LEADS_STORAGE_KEY = "lr_indicator_leads_v1";
 const PORTAL_AUTH_KEY = "lr_indicator_portal_auth_v1";
 
 const PORTAL_USER = "Master";
@@ -12,18 +13,6 @@ const STATUS_LABEL = {
   perdido: "Perdido",
 };
 
-const readLeads = () => {
-  try {
-    return JSON.parse(localStorage.getItem(LEADS_STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
-};
-
-const saveLeads = (leads) => {
-  localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
-};
-
 const hasPortalSession = () => sessionStorage.getItem(PORTAL_AUTH_KEY) === "authenticated";
 
 export default function PortalApp() {
@@ -32,8 +21,20 @@ export default function PortalApp() {
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
 
-  const [leads, setLeads] = useState(() => readLeads());
+  const [leads, setLeads] = useState([]);
   const [query, setQuery] = useState("");
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setLoadError("Supabase não configurado. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.");
+      return;
+    }
+
+    fetchLeads().then(setLeads).catch(() => {
+      setLoadError("Não foi possível carregar os leads do banco.");
+    });
+  }, []);
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -80,16 +81,17 @@ export default function PortalApp() {
     );
   }, [leads]);
 
-  const updateLead = (leadId, updater) => {
-    setLeads((prev) => {
-      const updated = prev.map((lead) => (lead.id === leadId ? updater(lead) : lead));
-      saveLeads(updated);
-      return updated;
-    });
+  const updateLeadState = async (leadId, updater) => {
+    const current = leads.find((lead) => lead.id === leadId);
+    if (!current) return;
+    const next = updater(current);
+
+    await updateLead(leadId, { status: next.status, history: next.history });
+    setLeads((prev) => prev.map((lead) => (lead.id === leadId ? next : lead)));
   };
 
   const handleStatusChange = (leadId, status) => {
-    updateLead(leadId, (lead) => ({
+    updateLeadState(leadId, (lead) => ({
       ...lead,
       status,
       history: [
@@ -108,7 +110,7 @@ export default function PortalApp() {
       return;
     }
 
-    updateLead(leadId, (lead) => ({
+    updateLeadState(leadId, (lead) => ({
       ...lead,
       history: [
         {
@@ -189,6 +191,8 @@ export default function PortalApp() {
           onChange={(event) => setQuery(event.target.value)}
         />
       </div>
+
+      {loadError && <p className="empty">{loadError}</p>}
 
       <section className="leadList">
         {filtered.length === 0 && <p className="empty">Nenhuma indicação encontrada.</p>}

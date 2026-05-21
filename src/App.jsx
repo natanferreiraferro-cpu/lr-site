@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { createLead } from "./lib/leadsApi";
 
 const INDICATOR_CODES_KEY = "lr_indicator_codes_v1";
-const LEADS_STORAGE_KEY = "lr_indicator_leads_v1";
 
 const normalizeIndicatorName = (name) => name.trim().toLowerCase().replace(/\s+/g, " ");
 const normalizeIndicatorCode = (code) => code.trim().toUpperCase();
@@ -38,17 +38,6 @@ const saveStoredRegistry = (registry) => {
   localStorage.setItem(INDICATOR_CODES_KEY, JSON.stringify(registry));
 };
 
-const getStoredLeads = () => {
-  try {
-    return JSON.parse(localStorage.getItem(LEADS_STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
-};
-
-const saveStoredLeads = (leads) => {
-  localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
-};
 
 const getOrCreateIndicator = (rawName) => {
   const name = rawName.trim();
@@ -143,7 +132,7 @@ export default function App() {
     setReferral((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleReferralSubmit = (event) => {
+  const handleReferralSubmit = async (event) => {
     event.preventDefault();
 
     const lead = {
@@ -164,8 +153,12 @@ export default function App() {
       ],
     };
 
-    const leads = getStoredLeads();
-    saveStoredLeads([lead, ...leads]);
+    try {
+      await createLead(lead);
+    } catch {
+      alert("Não foi possível salvar a indicação no banco agora. Tente novamente.");
+      return;
+    }
 
     const message = [
       "Olá! Nova indicação recebida:",
