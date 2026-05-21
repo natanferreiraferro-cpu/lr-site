@@ -14,6 +14,8 @@ const saveLeads = (leads) => {
   localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
 };
 
+const onlyDigits = (value) => value.replace(/\D/g, "");
+
 const emptyForm = {
   nomeCompleto: "",
   cpfCnpj: "",
@@ -21,6 +23,7 @@ const emptyForm = {
   celular: "",
   dataNascimento: "",
   rendaMensal: "",
+  gastoEnergiaMensal: "",
   cep: "",
   uf: "",
   cidade: "",
@@ -40,6 +43,59 @@ export default function ProjetoSolarApp() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const fetchAddressByCep = async (cepValue) => {
+    const cep = onlyDigits(cepValue);
+    if (cep.length !== 8) return;
+
+    try {
+      const response = await fetch(`https://brasilapi.com.br/api/cep/v1/${cep}`);
+      if (!response.ok) return;
+      const data = await response.json();
+
+      setForm((prev) => ({
+        ...prev,
+        cep: data.cep || prev.cep,
+        uf: data.state || prev.uf,
+        cidade: data.city || prev.cidade,
+        endereco: data.street || prev.endereco,
+        bairro: data.neighborhood || prev.bairro,
+      }));
+    } catch {
+      // silêncio para não interromper o preenchimento manual
+    }
+  };
+
+  const fetchCompanyByCnpj = async (cpfCnpjValue) => {
+    const cnpj = onlyDigits(cpfCnpjValue);
+    if (cnpj.length !== 14) return;
+
+    try {
+      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+      if (!response.ok) return;
+      const data = await response.json();
+
+      setForm((prev) => ({
+        ...prev,
+        nomeCompleto: data.razao_social || prev.nomeCompleto,
+        email: data.email || prev.email,
+        celular: data.ddd_telefone_1 || prev.celular,
+        cep: data.cep || prev.cep,
+        uf: data.uf || prev.uf,
+        cidade: data.municipio || prev.cidade,
+        endereco: data.logradouro || prev.endereco,
+        numero: data.numero || prev.numero,
+        complemento: data.complemento || prev.complemento,
+        bairro: data.bairro || prev.bairro,
+      }));
+
+      if (data.cep) {
+        fetchAddressByCep(data.cep);
+      }
+    } catch {
+      // silêncio para não interromper o preenchimento manual
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!acceptedLgpd) return;
@@ -52,7 +108,7 @@ export default function ProjetoSolarApp() {
       indicatorCode: "PROJ-SOLAR",
       indicadoNome: form.nomeCompleto,
       indicadoTelefone: form.celular,
-      gastoMensal: form.rendaMensal,
+      gastoMensal: form.gastoEnergiaMensal,
       status: "em_andamento",
       customerData: { ...form },
       lgpdAccepted: true,
@@ -77,7 +133,7 @@ export default function ProjetoSolarApp() {
       <style>{css}</style>
       <section className="solarCard">
         <h1>Projeto solar</h1>
-        <p>Preencha os dados para solicitar uma análise de crédito do financiamento solar.</p>
+        <p>Preencha os dados para análise do seu projeto solar.</p>
 
         {submitted && (
           <div className="successMsg">Seus dados estão em análise de aprovação. Boa sorte!</div>
@@ -87,16 +143,17 @@ export default function ProjetoSolarApp() {
           <h2>Dados do cliente</h2>
           <div className="grid two">
             <label>Nome completo<input required name="nomeCompleto" value={form.nomeCompleto} onChange={handleChange} placeholder="Ex: João da Silva Gomes"/></label>
-            <label>CPF ou CNPJ<input required name="cpfCnpj" value={form.cpfCnpj} onChange={handleChange} placeholder="000.000.000-00 ou 00.000.000/0000-00"/></label>
+            <label>CPF ou CNPJ<input required name="cpfCnpj" value={form.cpfCnpj} onChange={handleChange} onBlur={(e) => fetchCompanyByCnpj(e.target.value)} /></label>
             <label>E-mail<input required type="email" name="email" value={form.email} onChange={handleChange} placeholder="comprador@email.com.br"/></label>
             <label>Celular<input required name="celular" value={form.celular} onChange={handleChange} placeholder="(XX) 00000-0000"/></label>
             <label>Data de nascimento<input required name="dataNascimento" value={form.dataNascimento} onChange={handleChange} placeholder="DD/MM/AAAA"/></label>
             <label>Renda mensal<input required name="rendaMensal" value={form.rendaMensal} onChange={handleChange} placeholder="R$ 0,00"/></label>
+            <label>Quanto paga de energia mensal<input required name="gastoEnergiaMensal" value={form.gastoEnergiaMensal} onChange={handleChange} placeholder="R$ 0,00"/></label>
           </div>
 
           <h2>Dados de endereço / local de instalação</h2>
           <div className="grid three">
-            <label>CEP<input required name="cep" value={form.cep} onChange={handleChange} placeholder="00000-000"/></label>
+            <label>CEP<input required name="cep" value={form.cep} onChange={handleChange} onBlur={(e) => fetchAddressByCep(e.target.value)} placeholder="00000-000"/></label>
             <label>UF<input required name="uf" value={form.uf} onChange={handleChange} placeholder="UF"/></label>
             <label>Cidade<input required name="cidade" value={form.cidade} onChange={handleChange} placeholder="Cidade"/></label>
           </div>
@@ -109,7 +166,7 @@ export default function ProjetoSolarApp() {
 
           <label className="check">
             <input type="checkbox" checked={acceptedLgpd} onChange={(e) => setAcceptedLgpd(e.target.checked)} />
-            <span>Aceito os termos da LGPD e autorizo o uso dos meus dados para simulação de financiamento.</span>
+            <span>Aceito os termos da LGPD e autorizo o uso dos meus dados para análise do projeto solar.</span>
           </label>
 
           <div className="actions">
