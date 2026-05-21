@@ -226,6 +226,7 @@ export default function App() {
             <a href="#simulador">Simulador</a>
             <a href="#indicacao">Indicação</a>
             <a href="#contato">Contato</a>
+            <a href="/projeto.html" target="_blank" rel="noreferrer">Projeto solar</a>
             <a href="/portal.html" target="_blank" rel="noreferrer">Portal Indicadores</a>
           </nav>
 

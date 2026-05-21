@@ -62,7 +62,7 @@ export default function PortalApp() {
     }
 
     return leads.filter((lead) => {
-      return [lead.indicatorName, lead.indicatorCode, lead.indicadoNome, lead.indicadoTelefone]
+      return [lead.indicatorName, lead.indicatorCode, lead.indicadoNome, lead.indicadoTelefone, lead.customerData?.cpfCnpj, lead.customerData?.email]
         .join(" ")
         .toLowerCase()
         .includes(normalized);
@@ -225,6 +225,8 @@ function LeadCard({ lead, onStatusChange, onNoteSave }) {
         <p><strong>Código:</strong> {lead.indicatorCode}</p>
         <p><strong>Telefone:</strong> {lead.indicadoTelefone}</p>
         <p><strong>Gasto mensal:</strong> {lead.gastoMensal}</p>
+        {lead.customerData?.cpfCnpj && <p><strong>CPF/CNPJ:</strong> {lead.customerData.cpfCnpj}</p>}
+        {lead.customerData?.email && <p><strong>E-mail:</strong> {lead.customerData.email}</p>}
       </div>
 
       <div className="noteRow">

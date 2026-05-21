@@ -13,6 +13,7 @@ export default defineConfig({
       input: {
         main: resolve(rootDir, 'index.html'),
         portal: resolve(rootDir, 'portal.html'),
+        projeto: resolve(rootDir, 'projeto.html'),
       },
     },
   },
