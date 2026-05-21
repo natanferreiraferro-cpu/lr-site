@@ -16,6 +16,29 @@ const saveLeads = (leads) => {
 
 const onlyDigits = (value) => value.replace(/\D/g, "");
 
+const formatPhone = (value) => {
+  const digits = onlyDigits(value).slice(0, 11);
+  if (digits.length <= 2) return digits ? `(${digits}` : "";
+  if (digits.length <= 3) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
+const formatDate = (value) => {
+  const digits = onlyDigits(value).slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+};
+
+const formatMoney = (value) => {
+  const digits = onlyDigits(value);
+  if (!digits) return "";
+  const amount = Number(digits) / 100;
+  const formatted = amount.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return `R$: ${formatted}`;
+};
+
 const emptyForm = {
   nomeCompleto: "",
   cpfCnpj: "",
@@ -40,7 +63,13 @@ export default function ProjetoSolarApp() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    let nextValue = value;
+    if (name === "celular") nextValue = formatPhone(value);
+    if (name === "dataNascimento") nextValue = formatDate(value);
+    if (name === "rendaMensal" || name === "gastoEnergiaMensal") nextValue = formatMoney(value);
+
+    setForm((prev) => ({ ...prev, [name]: nextValue }));
   };
 
   const fetchAddressByCep = async (cepValue) => {
@@ -144,11 +173,11 @@ export default function ProjetoSolarApp() {
           <div className="grid two">
             <label>Nome completo<input required name="nomeCompleto" value={form.nomeCompleto} onChange={handleChange} placeholder="Ex: João da Silva Gomes"/></label>
             <label>CPF ou CNPJ<input required name="cpfCnpj" value={form.cpfCnpj} onChange={handleChange} onBlur={(e) => fetchCompanyByCnpj(e.target.value)} /></label>
-            <label>E-mail<input required type="email" name="email" value={form.email} onChange={handleChange} placeholder="comprador@email.com.br"/></label>
-            <label>Celular<input required name="celular" value={form.celular} onChange={handleChange} placeholder="(XX) 00000-0000"/></label>
-            <label>Data de nascimento<input required name="dataNascimento" value={form.dataNascimento} onChange={handleChange} placeholder="DD/MM/AAAA"/></label>
-            <label>Renda mensal<input required name="rendaMensal" value={form.rendaMensal} onChange={handleChange} placeholder="R$ 0,00"/></label>
-            <label>Quanto paga de energia mensal<input required name="gastoEnergiaMensal" value={form.gastoEnergiaMensal} onChange={handleChange} placeholder="R$ 0,00"/></label>
+            <label>E-mail<input required type="email" name="email" value={form.email} onChange={handleChange}/></label>
+            <label>Celular<input required name="celular" value={form.celular} onChange={handleChange} placeholder="(82) 9 0000-0000"/></label>
+            <label>Data de nascimento<input required name="dataNascimento" value={form.dataNascimento} onChange={handleChange} placeholder="00/00/0000"/></label>
+            <label>Renda mensal<input required name="rendaMensal" value={form.rendaMensal} onChange={handleChange} placeholder="R$: 300,00"/></label>
+            <label>Quanto paga de energia mensal<input required name="gastoEnergiaMensal" value={form.gastoEnergiaMensal} onChange={handleChange} placeholder="R$: 300,00"/></label>
           </div>
 
           <h2>Dados de endereço / local de instalação</h2>
