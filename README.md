@@ -52,3 +52,20 @@ Checklist rápido antes do deploy:
 - `vercel whoami`
 - `vercel link` (deve mostrar o projeto `site lr`)
 - `vercel deploy --prod`
+
+## Erro ao enviar formulário ("Não foi possível enviar seus dados agora")
+
+Se esse erro continuar mesmo com `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` corretas, siga esta ordem:
+
+1. Faça **novo deploy de produção** após salvar variáveis (valor novo só entra no build novo).
+2. Abra o navegador em produção e use **F12 → Network** para capturar a requisição que falha.
+3. Verifique o status da chamada:
+   - `401/403`: problema de permissão (RLS/policy no Supabase).
+   - `400`: payload inválido ou campo obrigatório ausente.
+   - `500`: erro interno na função/endpoint.
+4. No Supabase, confirme:
+   - policy de `INSERT` liberada para role `anon` (se o formulário grava direto no cliente);
+   - tabela/colunas com tipos corretos e sem `NOT NULL` inesperado;
+   - projeto/URL da API iguais aos da Vercel.
+
+> Observação: o simulador está embutido por `iframe` externo (`azume.com.br`). Se o erro vier do backend do simulador, o ajuste precisa ser feito no próprio serviço do simulador (não neste frontend).
