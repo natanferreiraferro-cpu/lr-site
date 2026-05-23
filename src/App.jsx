@@ -492,6 +492,11 @@ h1{
   border: 1px solid var(--line);
   border-radius: 22px;
   padding: 14px;
+  font-size: 14px;
+}
+
+.widgetWrap voiceai-widget{
+  font-size: .92em;
 }
 
 /* Final CTA */
