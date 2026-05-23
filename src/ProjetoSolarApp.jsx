@@ -49,6 +49,9 @@ export default function ProjetoSolarApp() {
   const [acceptedLgpd, setAcceptedLgpd] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [termsOpen, setTermsOpen] = useState(true);
+  const [termsDataShare, setTermsDataShare] = useState(false);
+  const [termsBacen, setTermsBacen] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -114,6 +117,9 @@ export default function ProjetoSolarApp() {
     }
   };
 
+
+  const canProceedTerms = termsDataShare && termsBacen;
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!acceptedLgpd) return;
@@ -169,6 +175,32 @@ export default function ProjetoSolarApp() {
 
         {submitError && <div className="empty">{submitError}</div>}
 
+        {termsOpen ? (
+          <div className="termsOverlay">
+            <div className="termsModal">
+              <button type="button" className="termsClose" onClick={() => window.history.back()}>×</button>
+              <h2>Termos de consentimento</h2>
+              <h3>Compartilhamento de dados pessoais</h3>
+              <p>Estou ciente e informei ao titular que os dados pessoais informados serão utilizados pelas instituições financeiras parceiras da LR Soluções Elétricas para registrar e consultar dados das operações de crédito, em conformidade com a LGPD.</p>
+              <h3>Resolução BACEN nº 4.571 de 2017, Artigo 10º</h3>
+              <p>Autorizamos o registro e consulta dos dados das operações de crédito no Sistema de Informações de Crédito do BACEN, para fins de supervisão de risco de crédito e intercâmbio de informações entre instituições financeiras, conforme legislação vigente.</p>
+
+              <label className="termsCheck">
+                <input type="checkbox" checked={termsDataShare} onChange={(e) => setTermsDataShare(e.target.checked)} />
+                <span>Estou ciente e informei ao titular sobre o compartilhamento de dados pessoais.</span>
+              </label>
+              <label className="termsCheck">
+                <input type="checkbox" checked={termsBacen} onChange={(e) => setTermsBacen(e.target.checked)} />
+                <span>Estou de acordo com a Resolução BACEN nº 4.571 de 2017. Artigo 10º.</span>
+              </label>
+
+              <div className="termsActions">
+                <button type="button" className="secondary" onClick={() => window.history.back()}>Fechar</button>
+                <button type="button" disabled={!canProceedTerms} onClick={() => setTermsOpen(false)}>Prosseguir</button>
+              </div>
+            </div>
+          </div>
+        ) : (
         <form onSubmit={handleSubmit}>
           <h2>Dados do cliente</h2>
           <div className="grid two">
@@ -204,6 +236,7 @@ export default function ProjetoSolarApp() {
             <button type="submit" disabled={!acceptedLgpd}>Enviar projeto para pré-análise</button>
           </div>
         </form>
+        )}
       </section>
     </main>
   );
@@ -225,5 +258,12 @@ button.secondary{background:#fff;border:1px solid #ccc;color:#111}
 button:disabled{opacity:.5;cursor:not-allowed}
 .successMsg{background:#e7f9ec;border:1px solid #96d8aa;color:#176a35;padding:12px;border-radius:10px;margin-bottom:12px;font-weight:700}
 .empty{background:#fff4e5;border:1px solid #f5c073;color:#8a5300;padding:12px;border-radius:10px;margin-bottom:12px;font-weight:600}
+.termsOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}
+.termsModal{position:relative;width:min(980px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;padding:28px}
+.termsModal h2{margin:0 0 14px;font-size:46px}.termsModal h3{margin:14px 0 8px;font-size:26px}.termsModal p{margin:0 0 12px;line-height:1.45;color:#333}
+.termsClose{position:absolute;right:18px;top:18px;height:44px;width:44px;border:1px solid #aaa;border-radius:10px;background:#fff;color:#333;font-size:28px;line-height:1;cursor:pointer}
+.termsCheck{display:flex;flex-direction:row;gap:10px;align-items:flex-start;margin:12px 0;font-size:30px;font-weight:700}
+.termsCheck input{height:28px;width:28px;margin-top:4px}
+.termsActions{display:flex;justify-content:flex-end;gap:12px;margin-top:18px}
 @media (max-width:960px){h1{font-size:34px}h2{font-size:24px}.grid.two,.grid.three{grid-template-columns:1fr}input{font-size:18px;height:48px}form label{font-size:16px}button{font-size:16px;height:48px}}
 `;

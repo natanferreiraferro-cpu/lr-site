@@ -231,6 +231,7 @@ function LeadCard({ lead, onStatusChange, onNoteSave }) {
         <p><strong>Gasto mensal:</strong> {lead.gastoMensal}</p>
         {lead.customerData?.cpfCnpj && <p><strong>CPF/CNPJ:</strong> {lead.customerData.cpfCnpj}</p>}
         {lead.customerData?.email && <p><strong>E-mail:</strong> {lead.customerData.email}</p>}
+        {lead.customerData?.rendaMensal && <p><strong>Renda mensal:</strong> {lead.customerData.rendaMensal}</p>}
       </div>
 
       <div className="noteRow">
