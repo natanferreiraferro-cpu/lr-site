@@ -15,6 +15,16 @@ npm run dev
 npm run build
 ```
 
+## Fluxo rápido para atualizar uma PR nova
+
+Quando você abrir uma PR nova e quiser garantir atualização no projeto certo:
+
+```bash
+npm run build
+npm run vercel:check-link
+npm run deploy:prod:safe
+```
+
 ## Deploy no projeto correto da Vercel
 
 Se as mudanças estiverem indo para um projeto antigo, faça o relink do diretório local para o projeto certo antes de publicar:
