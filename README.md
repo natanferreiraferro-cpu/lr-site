@@ -53,6 +53,22 @@ Checklist rápido antes do deploy:
 - `vercel link` (deve mostrar o projeto `site lr`)
 - `vercel deploy --prod`
 
+### Trava de segurança para não publicar no projeto antigo
+
+Este repositório possui uma checagem local de vínculo Vercel antes do deploy:
+
+```bash
+npm run vercel:check-link
+```
+
+Se o diretório local estiver vinculado ao projeto errado, o comando falha e orienta executar `vercel link`.
+
+Deploy seguro (só publica se o vínculo estiver correto):
+
+```bash
+npm run deploy:prod:safe
+```
+
 ## Erro ao enviar formulário ("Não foi possível enviar seus dados agora")
 
 Se esse erro continuar mesmo com `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` corretas, siga esta ordem:

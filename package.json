@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "vercel:check-link": "bash scripts/check-vercel-link.sh",
+    "deploy:prod:safe": "npm run vercel:check-link && vercel --prod"
   },
   "dependencies": {
     "react": "^19.2.0",
