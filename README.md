@@ -88,6 +88,14 @@ npm run vercel:check-link
 
 Se o diretório local estiver vinculado ao projeto errado, o comando falha e orienta executar `vercel link`.
 
+Antes do primeiro uso no computador, fixe o ID do projeto correto (depois do `vercel link`):
+
+```bash
+echo "$(node -e "const fs=require(\'fs\');const p=JSON.parse(fs.readFileSync(\'.vercel/project.json\',\'utf8\'));process.stdout.write(p.projectId||\'\')")" > .vercel/expected-project-id
+```
+
+> Esse arquivo local evita hardcode de `projectId` antigo no repositório.
+
 Deploy seguro (só publica se o vínculo estiver correto):
 
 ```bash
