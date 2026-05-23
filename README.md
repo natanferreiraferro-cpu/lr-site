@@ -53,6 +53,21 @@ Checklist rápido antes do deploy:
 - `vercel link` (deve mostrar o projeto `site lr`)
 - `vercel deploy --prod`
 
+## Diferença entre Pré-visualização e Produção (causa comum)
+
+Se na tela de implantação aparecer **Ambiente: Pré-visualização**, essa URL não substitui o site de produção automaticamente.
+
+Para publicar no site principal:
+
+1. Faça merge no branch de produção (normalmente `main`) **ou** rode `vercel --prod`.
+2. Em **Project Settings → Domains**, confirme que o domínio principal (ex.: `lrsolucoes.solar`) está apontando para **Production** deste projeto.
+3. No projeto antigo, remova o domínio principal para evitar que ele continue servindo a versão antiga.
+
+Checklist do print:
+
+- Se o card da implantação mostrar **Pré-visualização**, é esperado gerar domínio `*.vercel.app` temporário.
+- Só considere atualização “no ar” quando a implantação estiver em **Produção** e o domínio principal estiver anexado a ela.
+
 ### Trava de segurança para não publicar no projeto antigo
 
 Este repositório possui uma checagem local de vínculo Vercel antes do deploy:
