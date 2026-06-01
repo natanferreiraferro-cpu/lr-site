@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchLeads, updateLead } from "./lib/leadsApi";
-import { isSupabaseConfigured } from "./lib/supabaseClient";
 
 const PORTAL_AUTH_KEY = "lr_indicator_portal_auth_v1";
 
@@ -26,11 +25,6 @@ export default function PortalApp() {
   const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setLoadError("Supabase não configurado. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.");
-      return;
-    }
-
     fetchLeads().then(setLeads).catch(() => {
       setLoadError("Não foi possível carregar os leads do banco.");
     });

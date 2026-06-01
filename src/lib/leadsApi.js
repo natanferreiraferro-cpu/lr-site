@@ -1,80 +1,70 @@
-import { isSupabaseConfigured, supabaseConfig } from "./supabaseClient";
+// Cliente de leads usado pela página principal (criação de indicação) e pelo
+// Portal (leitura/atualização). Toda a comunicação passa pelas funções
+// serverless /api/projeto-lead e /api/leads — a anon key não é mais usada,
+// pois a tabela `projeto_solar` só aceita acesso via service_role.
 
-const TABLE = "leads";
-
-const supabaseRequest = async (path, options = {}) => {
-  const response = await fetch(`${supabaseConfig.url}/rest/v1/${path}`, {
-    ...options,
-    headers: {
-      apikey: supabaseConfig.anonKey,
-      Authorization: `Bearer ${supabaseConfig.anonKey}`,
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Erro de integração com Supabase");
-  }
-
-  if (response.status === 204) return null;
-  return response.json();
-};
+const mapRowToLead = (row) => ({
+  id: row.id,
+  createdAt: row.created_at,
+  indicatorName: row.indicator_name,
+  indicatorCode: row.indicator_code,
+  indicadoNome: row.nome_completo,
+  indicadoTelefone: row.celular,
+  gastoMensal: row.gasto_energia_mensal,
+  status: row.status,
+  source: row.source,
+  customerData: {
+    cpfCnpj: row.cpf_cnpj || null,
+    email: row.email || null,
+    rendaMensal: row.renda_mensal || null,
+  },
+  lgpdAccepted: row.lgpd_accepted,
+  history: row.history || [],
+});
 
 export const fetchLeads = async () => {
-  if (!isSupabaseConfigured) throw new Error("Supabase não configurado.");
+  const response = await fetch("/api/leads");
+  if (!response.ok) {
+    throw new Error("Não foi possível carregar os leads.");
+  }
 
-  const data = await supabaseRequest(`${TABLE}?select=*&order=created_at.desc`);
-
-  return (data || []).map((row) => ({
-    id: row.id,
-    createdAt: row.created_at,
-    indicatorName: row.indicator_name,
-    indicatorCode: row.indicator_code,
-    indicadoNome: row.indicado_nome,
-    indicadoTelefone: row.indicado_telefone,
-    gastoMensal: row.gasto_mensal,
-    status: row.status,
-    source: row.source,
-    customerData: row.customer_data || null,
-    lgpdAccepted: row.lgpd_accepted,
-    history: row.history || [],
-  }));
+  const data = await response.json();
+  return (data || []).map(mapRowToLead);
 };
 
 export const createLead = async (lead) => {
-  if (!isSupabaseConfigured) throw new Error("Supabase não configurado.");
-
-  const payload = {
-    indicator_name: lead.indicatorName || null,
-    indicator_code: lead.indicatorCode || null,
-    indicado_nome: lead.indicadoNome || null,
-    indicado_telefone: lead.indicadoTelefone || null,
-    gasto_mensal: lead.gastoMensal || null,
-    status: lead.status || "em_andamento",
-    source: lead.source || "site",
-    customer_data: lead.customerData || null,
-    lgpd_accepted: Boolean(lead.lgpdAccepted),
-    history: lead.history || [],
-  };
-
-  return supabaseRequest(TABLE, {
+  const response = await fetch("/api/projeto-lead", {
     method: "POST",
-    headers: { Prefer: "return=representation" },
-    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source: "indicacao",
+      indicatorName: lead.indicatorName,
+      indicatorCode: lead.indicatorCode,
+      indicadoNome: lead.indicadoNome,
+      indicadoTelefone: lead.indicadoTelefone,
+      gastoMensal: lead.gastoMensal,
+    }),
   });
+
+  if (!response.ok) {
+    throw new Error("Não foi possível salvar a indicação.");
+  }
+
+  return response.json();
 };
 
 export const updateLead = async (leadId, partialLead) => {
-  if (!isSupabaseConfigured) throw new Error("Supabase não configurado.");
-
   const patch = {};
   if (partialLead.status !== undefined) patch.status = partialLead.status;
   if (partialLead.history !== undefined) patch.history = partialLead.history;
 
-  await supabaseRequest(`${TABLE}?id=eq.${leadId}`, {
+  const response = await fetch(`/api/leads?id=${encodeURIComponent(leadId)}`, {
     method: "PATCH",
-    headers: { Prefer: "return=minimal" },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(patch),
   });
+
+  if (!response.ok) {
+    throw new Error("Não foi possível atualizar o lead.");
+  }
 };
