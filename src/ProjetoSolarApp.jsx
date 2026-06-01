@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { createLead } from "./lib/leadsApi";
-import { isSupabaseConfigured } from "./lib/supabaseClient";
 
 const onlyDigits = (value) => value.replace(/\D/g, "");
 
@@ -124,34 +122,25 @@ export default function ProjetoSolarApp() {
     event.preventDefault();
     if (!acceptedLgpd) return;
 
-    const lead = {
-      id: `lead-solar-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      source: "projeto_solar",
-      indicatorName: "Site - Projeto solar",
-      indicatorCode: "PROJ-SOLAR",
-      indicadoNome: form.nomeCompleto,
-      indicadoTelefone: form.celular,
-      gastoMensal: form.gastoEnergiaMensal,
-      status: "em_andamento",
-      customerData: { ...form },
+    const payload = {
+      ...form,
       lgpdAccepted: true,
-      history: [
-        {
-          at: new Date().toISOString(),
-          status: "em_andamento",
-          note: "Lead criado via formulário Projeto Solar",
-        },
-      ],
+      termosCompartilhamento: termsDataShare,
+      termosBacen: termsBacen,
     };
 
-    if (!isSupabaseConfigured) {
-      setSubmitError("Supabase não configurado. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.");
-      return;
-    }
-
     try {
-      await createLead(lead);
+      const response = await fetch("/api/projeto-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        setSubmitError("Não foi possível enviar seus dados agora. Tente novamente.");
+        return;
+      }
+
       setSubmitted(true);
       setSubmitError("");
     } catch {
